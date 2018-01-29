@@ -85,14 +85,18 @@ export default function fitWidth(WrappedComponent) {
 		}, {
 			key: "handleWindowResize",
 			value: function handleWindowResize() {
-				var el = ReactDOM.findDOMNode(this.node); // eslint-disable-line react/no-find-dom-node
-				var w = el.parentNode.clientWidth;
+				var _this2 = this;
 
-				if (w > minWidth) {
-					this.setState({
-						width: w
+				this.setState({
+					width: 0
+				}, function () {
+					var el = ReactDOM.findDOMNode(_this2.node); // eslint-disable-line react/no-find-dom-node
+					var w = el.parentNode.clientWidth;
+
+					_this2.setState({
+						width: Math.max(w, minWidth)
 					});
-				}
+				});
 			}
 		}, {
 			key: "getWrappedInstance",

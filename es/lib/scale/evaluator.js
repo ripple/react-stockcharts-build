@@ -21,7 +21,7 @@ function getNewEnd(fallbackEnd, xAccessor, initialXScale, start) {
 	return newEnd;
 }
 
-function extentsWrapper(useWholeData, clamp, pointsPerPxThreshold, minPointsPerPxThreshold) {
+function extentsWrapper(useWholeData, clamp, pointsPerPxThreshold, minPointsPerPxThreshold, flipXScale) {
 	function filterData(data, inputDomain, xAccessor, initialXScale) {
 		var _ref = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {},
 		    currentPlotData = _ref.currentPlotData,
@@ -60,6 +60,11 @@ function extentsWrapper(useWholeData, clamp, pointsPerPxThreshold, minPointsPerP
 		var xScale = initialXScale.copy().domain(realInputDomain);
 
 		var width = Math.floor(xScale(xAccessor(last(filteredData))) - xScale(xAccessor(head(filteredData))));
+
+		// prevent negative width when flipXScale
+		if (flipXScale && width < 0) {
+			width = width * -1;
+		}
 
 		var plotData = void 0,
 		    domain = void 0;
@@ -130,8 +135,9 @@ export default function (_ref2) {
 	    useWholeData = _ref2.useWholeData,
 	    clamp = _ref2.clamp,
 	    pointsPerPxThreshold = _ref2.pointsPerPxThreshold,
-	    minPointsPerPxThreshold = _ref2.minPointsPerPxThreshold;
+	    minPointsPerPxThreshold = _ref2.minPointsPerPxThreshold,
+	    flipXScale = _ref2.flipXScale;
 
-	return extentsWrapper(useWholeData || isNotDefined(xScale.invert), clamp, pointsPerPxThreshold, minPointsPerPxThreshold);
+	return extentsWrapper(useWholeData || isNotDefined(xScale.invert), clamp, pointsPerPxThreshold, minPointsPerPxThreshold, flipXScale);
 }
 //# sourceMappingURL=evaluator.js.map

@@ -1,5 +1,7 @@
 "use strict";
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -36,6 +38,7 @@ var EventCapture = function (_Component) {
 		_this.handlePanEnd = _this.handlePanEnd.bind(_this);
 		_this.handlePan = _this.handlePan.bind(_this);
 		_this.handleTouchStart = _this.handleTouchStart.bind(_this);
+		_this.handleTouchMove = _this.handleTouchMove.bind(_this);
 		_this.handlePinchZoom = _this.handlePinchZoom.bind(_this);
 		_this.handlePinchZoomEnd = _this.handlePinchZoomEnd.bind(_this);
 
@@ -459,6 +462,14 @@ var EventCapture = function (_Component) {
 			}
 		}
 	}, {
+		key: "handleTouchMove",
+		value: function handleTouchMove(e) {
+			var onMouseMove = this.props.onMouseMove;
+
+			var touchXY = touchPosition(getTouchProps(e.touches[0]), e);
+			onMouseMove(touchXY, "touch", e);
+		}
+	}, {
 		key: "handleTouchStart",
 		value: function handleTouchStart(e) {
 			this.mouseInteraction = false;
@@ -476,7 +487,8 @@ var EventCapture = function (_Component) {
 
 				this.panHappened = false;
 				var touchXY = touchPosition(getTouchProps(e.touches[0]), e);
-				// onMouseMove(touchXY, "touch", e);
+				onMouseMove(touchXY, "touch", e);
+
 				if (panEnabled) {
 					var currentCharts = getCurrentCharts(chartConfig, touchXY);
 
@@ -488,8 +500,6 @@ var EventCapture = function (_Component) {
 							chartsToPan: currentCharts
 						}
 					});
-
-					onMouseMove(touchXY, "touch", e);
 
 					var win = d3Window(this.node);
 					select(win).on(TOUCHMOVE, this.handlePan, false).on(TOUCHEND, this.handlePanEnd, false);
@@ -603,21 +613,26 @@ var EventCapture = function (_Component) {
 		value: function render() {
 			var _props13 = this.props,
 			    height = _props13.height,
-			    width = _props13.width;
+			    width = _props13.width,
+			    disableInteraction = _props13.disableInteraction;
 
 			var className = this.state.cursorOverrideClass != null ? this.state.cursorOverrideClass : this.state.panInProgress ? "react-stockcharts-grabbing-cursor" : "react-stockcharts-crosshair-cursor";
 
-			return React.createElement("rect", { ref: this.saveNode,
-				className: className,
-				width: width,
-				height: height,
-				style: { opacity: 0 },
+			var interactionProps = disableInteraction || {
 				onWheel: this.handleWheel,
 				onMouseDown: this.handleMouseDown,
 				onClick: this.handleClick,
-				onContextMenu: this.handleRightClick,
-				onTouchStart: this.handleTouchStart
-			});
+				onContextMenu: this.handleContextMenu,
+				onTouchStart: this.handleTouchStart,
+				onTouchMove: this.handleTouchMove
+			};
+
+			return React.createElement("rect", _extends({ ref: this.saveNode,
+				className: className,
+				width: width,
+				height: height,
+				style: { opacity: 0 }
+			}, interactionProps));
 		}
 	}]);
 
@@ -640,6 +655,7 @@ EventCapture.propTypes = {
 	chartConfig: PropTypes.array,
 	xScale: PropTypes.func.isRequired,
 	xAccessor: PropTypes.func.isRequired,
+	disableInteraction: PropTypes.bool.isRequired,
 
 	getAllPanConditions: PropTypes.func.isRequired,
 
@@ -668,7 +684,8 @@ EventCapture.defaultProps = {
 	pan: false,
 	panSpeedMultiplier: 1,
 	focus: false,
-	onDragComplete: noop
+	onDragComplete: noop,
+	disableInteraction: false
 };
 
 export default EventCapture;

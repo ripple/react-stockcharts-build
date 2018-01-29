@@ -183,6 +183,7 @@ function tickHelper(props, scale) {
 	    tickStrokeDasharray = props.tickStrokeDasharray,
 	    fontSize = props.fontSize,
 	    fontFamily = props.fontFamily,
+	    fontWeight = props.fontWeight,
 	    showTicks = props.showTicks,
 	    flexTicks = props.flexTicks,
 	    showTickLabel = props.showTickLabel;
@@ -301,6 +302,7 @@ function tickHelper(props, scale) {
 		textAnchor: textAnchor,
 		fontSize: fontSize,
 		fontFamily: fontFamily,
+		fontWeight: fontWeight,
 		format: format,
 		showTickLabel: showTickLabel
 	};
@@ -379,7 +381,8 @@ function Tick(props) {
 	    tickStrokeWidth = props.tickStrokeWidth,
 	    textAnchor = props.textAnchor,
 	    fontSize = props.fontSize,
-	    fontFamily = props.fontFamily;
+	    fontFamily = props.fontFamily,
+	    fontWeight = props.fontWeight;
 	var x1 = props.x1,
 	    y1 = props.y1,
 	    x2 = props.x2,
@@ -405,6 +408,7 @@ function Tick(props) {
 				dy: dy, x: labelX, y: labelY,
 				fill: tickLabelFill,
 				fontSize: fontSize,
+				fontWeight: fontWeight,
 				fontFamily: fontFamily,
 				textAnchor: textAnchor },
 			props.children
@@ -428,7 +432,8 @@ Tick.propTypes = {
 	tickStrokeDasharray: PropTypes.oneOf(strokeDashTypes),
 	textAnchor: PropTypes.string,
 	fontSize: PropTypes.number,
-	fontFamily: PropTypes.string
+	fontFamily: PropTypes.string,
+	fontWeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 function axisTicksSVG(props, scale) {
@@ -442,6 +447,7 @@ function axisTicksSVG(props, scale) {
 	    textAnchor = result.textAnchor;
 	var fontSize = result.fontSize,
 	    fontFamily = result.fontFamily,
+	    fontWeight = result.fontWeight,
 	    ticks = result.ticks,
 	    format = result.format;
 	var dy = result.dy;
@@ -464,7 +470,9 @@ function axisTicksSVG(props, scale) {
 					x2: tick.x2, y2: tick.y2,
 					labelX: tick.labelX, labelY: tick.labelY,
 					textAnchor: textAnchor,
-					fontSize: fontSize, fontFamily: fontFamily },
+					fontSize: fontSize,
+					fontWeight: fontWeight,
+					fontFamily: fontFamily },
 				format(tick.value)
 			);
 		})
@@ -478,6 +486,7 @@ function drawTicks(ctx, result) {
 	var textAnchor = result.textAnchor,
 	    fontSize = result.fontSize,
 	    fontFamily = result.fontFamily,
+	    fontWeight = result.fontWeight,
 	    ticks = result.ticks,
 	    showTickLabel = result.showTickLabel;
 
@@ -491,7 +500,7 @@ function drawTicks(ctx, result) {
 		drawEachTick(ctx, tick, result);
 	});
 
-	ctx.font = fontSize + "px " + fontFamily;
+	ctx.font = fontWeight + " " + fontSize + "px " + fontFamily;
 	ctx.fillStyle = tickLabelFill;
 	ctx.textAlign = textAnchor === "middle" ? "center" : textAnchor;
 

@@ -22,216 +22,216 @@ import { getAxisCanvas, getMouseCanvas } from "../GenericComponent";
 import { isDefined, getClosestItemIndexes, strokeDashTypes, getStrokeDasharray } from "../utils";
 
 var LineSeries = function (_Component) {
-  _inherits(LineSeries, _Component);
+	_inherits(LineSeries, _Component);
 
-  function LineSeries(props) {
-    _classCallCheck(this, LineSeries);
+	function LineSeries(props) {
+		_classCallCheck(this, LineSeries);
 
-    var _this = _possibleConstructorReturn(this, (LineSeries.__proto__ || Object.getPrototypeOf(LineSeries)).call(this, props));
+		var _this = _possibleConstructorReturn(this, (LineSeries.__proto__ || Object.getPrototypeOf(LineSeries)).call(this, props));
 
-    _this.renderSVG = _this.renderSVG.bind(_this);
-    _this.drawOnCanvas = _this.drawOnCanvas.bind(_this);
-    _this.isHover = _this.isHover.bind(_this);
-    return _this;
-  }
+		_this.renderSVG = _this.renderSVG.bind(_this);
+		_this.drawOnCanvas = _this.drawOnCanvas.bind(_this);
+		_this.isHover = _this.isHover.bind(_this);
+		return _this;
+	}
 
-  _createClass(LineSeries, [{
-    key: "isHover",
-    value: function isHover(moreProps) {
-      // console.log("HERE")
-      var _props = this.props,
-          highlightOnHover = _props.highlightOnHover,
-          yAccessor = _props.yAccessor,
-          hoverTolerance = _props.hoverTolerance;
-
-
-      if (!highlightOnHover) return false;
-
-      var mouseXY = moreProps.mouseXY,
-          currentItem = moreProps.currentItem,
-          xScale = moreProps.xScale,
-          plotData = moreProps.plotData;
-      var _moreProps$chartConfi = moreProps.chartConfig,
-          yScale = _moreProps$chartConfi.yScale,
-          origin = _moreProps$chartConfi.origin;
-      var xAccessor = moreProps.xAccessor;
-
-      var _mouseXY = _slicedToArray(mouseXY, 2),
-          x = _mouseXY[0],
-          y = _mouseXY[1];
-
-      var radius = hoverTolerance;
-
-      var _getClosestItemIndexe = getClosestItemIndexes(plotData, xScale.invert(x), xAccessor),
-          left = _getClosestItemIndexe.left,
-          right = _getClosestItemIndexe.right;
-
-      if (left === right) {
-        var cy = yScale(yAccessor(currentItem)) + origin[1];
-        var cx = xScale(xAccessor(currentItem)) + origin[0];
-
-        var hovering1 = Math.pow(x - cx, 2) + Math.pow(y - cy, 2) < Math.pow(radius, 2);
-
-        return hovering1;
-      } else {
-        var l = plotData[left];
-        var r = plotData[right];
-        var x1 = xScale(xAccessor(l)) + origin[0];
-        var y1 = yScale(yAccessor(l)) + origin[1];
-        var x2 = xScale(xAccessor(r)) + origin[0];
-        var y2 = yScale(yAccessor(r)) + origin[1];
-
-        // y = m * x + b
-        var m /* slope */ = (y2 - y1) / (x2 - x1);
-        var b /* y intercept */ = -1 * m * x1 + y1;
-
-        var desiredY = Math.round(m * x + b);
-
-        var hovering2 = y >= desiredY - radius && y <= desiredY + radius;
-
-        return hovering2;
-      }
-    }
-  }, {
-    key: "drawOnCanvas",
-    value: function drawOnCanvas(ctx, moreProps) {
-      var _props2 = this.props,
-          yAccessor = _props2.yAccessor,
-          stroke = _props2.stroke,
-          strokeWidth = _props2.strokeWidth,
-          hoverStrokeWidth = _props2.hoverStrokeWidth,
-          defined = _props2.defined,
-          strokeDasharray = _props2.strokeDasharray,
-          interpolation = _props2.interpolation,
-          lineCap = _props2.lineCap,
-          lineJoin = _props2.lineJoin;
-      var connectNulls = this.props.connectNulls;
-      var xAccessor = moreProps.xAccessor;
-      var xScale = moreProps.xScale,
-          yScale = moreProps.chartConfig.yScale,
-          plotData = moreProps.plotData,
-          hovering = moreProps.hovering;
+	_createClass(LineSeries, [{
+		key: "isHover",
+		value: function isHover(moreProps) {
+			// console.log("HERE")
+			var _props = this.props,
+			    highlightOnHover = _props.highlightOnHover,
+			    yAccessor = _props.yAccessor,
+			    hoverTolerance = _props.hoverTolerance;
 
 
-      ctx.lineWidth = hovering ? hoverStrokeWidth : strokeWidth;
-      ctx.lineCap = lineCap;
-      ctx.lineJoin = lineJoin;
-      ctx.strokeStyle = stroke;
-      ctx.setLineDash(getStrokeDasharray(strokeDasharray).split(","));
+			if (!highlightOnHover) return false;
 
-      var dataSeries = d3Line().x(function (d) {
-        return xScale(xAccessor(d));
-      }).y(function (d) {
-        return yScale(yAccessor(d));
-      });
+			var mouseXY = moreProps.mouseXY,
+			    currentItem = moreProps.currentItem,
+			    xScale = moreProps.xScale,
+			    plotData = moreProps.plotData;
+			var _moreProps$chartConfi = moreProps.chartConfig,
+			    yScale = _moreProps$chartConfi.yScale,
+			    origin = _moreProps$chartConfi.origin;
+			var xAccessor = moreProps.xAccessor;
 
-      if (isDefined(interpolation)) {
-        dataSeries.curve(interpolation);
-      }
-      if (!connectNulls) {
-        dataSeries.defined(function (d) {
-          return defined(yAccessor(d));
-        });
-      }
+			var _mouseXY = _slicedToArray(mouseXY, 2),
+			    x = _mouseXY[0],
+			    y = _mouseXY[1];
 
-      ctx.beginPath();
-      dataSeries.context(ctx)(plotData);
-      ctx.stroke();
-      /*
-      let points = [];
-      for (let i = 0; i < plotData.length; i++) {
-        const d = plotData[i];
-        if (defined(yAccessor(d), i)) {
-          const [x, y] = [xScale(xAccessor(d)), yScale(yAccessor(d))];
-           points.push([x, y]);
-        } else if (points.length) {
-          segment(points, ctx);
-          points = connectNulls ? points : [];
-        }
-      }
-       if (points.length) segment(points, ctx);*/
-    }
-  }, {
-    key: "renderSVG",
-    value: function renderSVG(moreProps) {
-      var _props3 = this.props,
-          yAccessor = _props3.yAccessor,
-          stroke = _props3.stroke,
-          strokeWidth = _props3.strokeWidth,
-          hoverStrokeWidth = _props3.hoverStrokeWidth,
-          lineCap = _props3.lineCap,
-          lineJoin = _props3.lineJoin,
-          defined = _props3.defined,
-          strokeDasharray = _props3.strokeDasharray;
-      var connectNulls = this.props.connectNulls;
-      var interpolation = this.props.interpolation;
-      var xAccessor = moreProps.xAccessor;
-      var xScale = moreProps.xScale,
-          yScale = moreProps.chartConfig.yScale,
-          plotData = moreProps.plotData,
-          hovering = moreProps.hovering;
+			var radius = hoverTolerance;
 
+			var _getClosestItemIndexe = getClosestItemIndexes(plotData, xScale.invert(x), xAccessor),
+			    left = _getClosestItemIndexe.left,
+			    right = _getClosestItemIndexe.right;
 
-      var dataSeries = d3Line().x(function (d) {
-        return xScale(xAccessor(d));
-      }).y(function (d) {
-        return yScale(yAccessor(d));
-      });
+			if (left === right) {
+				var cy = yScale(yAccessor(currentItem)) + origin[1];
+				var cx = xScale(xAccessor(currentItem)) + origin[0];
 
-      if (isDefined(interpolation)) {
-        dataSeries.curve(interpolation);
-      }
-      if (!connectNulls) {
-        dataSeries.defined(function (d) {
-          return defined(yAccessor(d));
-        });
-      }
-      var d = dataSeries(plotData);
+				var hovering1 = Math.pow(x - cx, 2) + Math.pow(y - cy, 2) < Math.pow(radius, 2);
 
-      var _props4 = this.props,
-          fill = _props4.fill,
-          className = _props4.className;
+				return hovering1;
+			} else {
+				var l = plotData[left];
+				var r = plotData[right];
+				var x1 = xScale(xAccessor(l)) + origin[0];
+				var y1 = yScale(yAccessor(l)) + origin[1];
+				var x2 = xScale(xAccessor(r)) + origin[0];
+				var y2 = yScale(yAccessor(r)) + origin[1];
+
+				// y = m * x + b
+				var m /* slope */ = (y2 - y1) / (x2 - x1);
+				var b /* y intercept */ = -1 * m * x1 + y1;
+
+				var desiredY = Math.round(m * x + b);
+
+				var hovering2 = y >= desiredY - radius && y <= desiredY + radius;
+
+				return hovering2;
+			}
+		}
+	}, {
+		key: "drawOnCanvas",
+		value: function drawOnCanvas(ctx, moreProps) {
+			var _props2 = this.props,
+			    yAccessor = _props2.yAccessor,
+			    stroke = _props2.stroke,
+			    strokeWidth = _props2.strokeWidth,
+			    hoverStrokeWidth = _props2.hoverStrokeWidth,
+			    defined = _props2.defined,
+			    strokeDasharray = _props2.strokeDasharray,
+			    interpolation = _props2.interpolation,
+			    lineCap = _props2.lineCap,
+			    lineJoin = _props2.lineJoin;
+			var connectNulls = this.props.connectNulls;
+			var xAccessor = moreProps.xAccessor;
+			var xScale = moreProps.xScale,
+			    yScale = moreProps.chartConfig.yScale,
+			    plotData = moreProps.plotData,
+			    hovering = moreProps.hovering;
 
 
-      console.log(lineCap, lineJoin);
+			ctx.lineWidth = hovering ? hoverStrokeWidth : strokeWidth;
+			ctx.lineCap = lineCap;
+			ctx.lineJoin = lineJoin;
+			ctx.strokeStyle = stroke;
+			ctx.setLineDash(getStrokeDasharray(strokeDasharray).split(","));
 
-      return React.createElement("path", { className: className + " " + (stroke ? "" : " line-stroke"),
-        d: d,
-        stroke: stroke,
-        strokeLinecap: lineCap,
-        strokeLinejoin: lineJoin,
-        strokeWidth: hovering ? hoverStrokeWidth : strokeWidth,
-        strokeDasharray: getStrokeDasharray(strokeDasharray),
-        fill: fill
-      });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var highlightOnHover = this.props.highlightOnHover;
+			var dataSeries = d3Line().x(function (d) {
+				return xScale(xAccessor(d));
+			}).y(function (d) {
+				return yScale(yAccessor(d));
+			});
 
-      var hoverProps = highlightOnHover ? {
-        isHover: this.isHover,
-        drawOn: ["mousemove", "pan"],
-        canvasToDraw: getMouseCanvas
-      } : {
-        drawOn: ["pan"],
-        canvasToDraw: getAxisCanvas
-      };
+			if (isDefined(interpolation)) {
+				dataSeries.curve(interpolation);
+			}
+			if (!connectNulls) {
+				dataSeries.defined(function (d) {
+					return defined(yAccessor(d));
+				});
+			}
 
-      return React.createElement(GenericChartComponent, _extends({
-        svgDraw: this.renderSVG,
+			ctx.beginPath();
+			dataSeries.context(ctx)(plotData);
+			ctx.stroke();
+			/*
+     let points = [];
+     for (let i = 0; i < plotData.length; i++) {
+       const d = plotData[i];
+       if (defined(yAccessor(d), i)) {
+         const [x, y] = [xScale(xAccessor(d)), yScale(yAccessor(d))];
+          points.push([x, y]);
+       } else if (points.length) {
+         segment(points, ctx);
+         points = connectNulls ? points : [];
+       }
+     }
+      if (points.length) segment(points, ctx);*/
+		}
+	}, {
+		key: "renderSVG",
+		value: function renderSVG(moreProps) {
+			var _props3 = this.props,
+			    yAccessor = _props3.yAccessor,
+			    stroke = _props3.stroke,
+			    strokeWidth = _props3.strokeWidth,
+			    hoverStrokeWidth = _props3.hoverStrokeWidth,
+			    lineCap = _props3.lineCap,
+			    lineJoin = _props3.lineJoin,
+			    defined = _props3.defined,
+			    strokeDasharray = _props3.strokeDasharray;
+			var connectNulls = this.props.connectNulls;
+			var interpolation = this.props.interpolation;
+			var xAccessor = moreProps.xAccessor;
+			var xScale = moreProps.xScale,
+			    yScale = moreProps.chartConfig.yScale,
+			    plotData = moreProps.plotData,
+			    hovering = moreProps.hovering;
 
-        canvasDraw: this.drawOnCanvas,
 
-        onClickWhenHover: this.props.onClick,
-        onDoubleClickWhenHover: this.props.onDoubleClick,
-        onContextMenuWhenHover: this.props.onContextMenu
-      }, hoverProps));
-    }
-  }]);
+			var dataSeries = d3Line().x(function (d) {
+				return xScale(xAccessor(d));
+			}).y(function (d) {
+				return yScale(yAccessor(d));
+			});
 
-  return LineSeries;
+			if (isDefined(interpolation)) {
+				dataSeries.curve(interpolation);
+			}
+			if (!connectNulls) {
+				dataSeries.defined(function (d) {
+					return defined(yAccessor(d));
+				});
+			}
+			var d = dataSeries(plotData);
+
+			var _props4 = this.props,
+			    fill = _props4.fill,
+			    className = _props4.className;
+
+
+			console.log(lineCap, lineJoin);
+
+			return React.createElement("path", { className: className + " " + (stroke ? "" : " line-stroke"),
+				d: d,
+				stroke: stroke,
+				strokeLinecap: lineCap,
+				strokeLinejoin: lineJoin,
+				strokeWidth: hovering ? hoverStrokeWidth : strokeWidth,
+				strokeDasharray: getStrokeDasharray(strokeDasharray),
+				fill: fill
+			});
+		}
+	}, {
+		key: "render",
+		value: function render() {
+			var highlightOnHover = this.props.highlightOnHover;
+
+			var hoverProps = highlightOnHover ? {
+				isHover: this.isHover,
+				drawOn: ["mousemove", "pan"],
+				canvasToDraw: getMouseCanvas
+			} : {
+				drawOn: ["pan"],
+				canvasToDraw: getAxisCanvas
+			};
+
+			return React.createElement(GenericChartComponent, _extends({
+				svgDraw: this.renderSVG,
+
+				canvasDraw: this.drawOnCanvas,
+
+				onClickWhenHover: this.props.onClick,
+				onDoubleClickWhenHover: this.props.onDoubleClick,
+				onContextMenuWhenHover: this.props.onContextMenu
+			}, hoverProps));
+		}
+	}]);
+
+	return LineSeries;
 }(Component);
 
 /*
@@ -250,49 +250,49 @@ function segment(points, ctx) {
 */
 
 LineSeries.propTypes = {
-  className: PropTypes.string,
-  strokeWidth: PropTypes.number,
-  stroke: PropTypes.string,
-  lineCap: PropTypes.string,
-  lineJoin: PropTypes.string,
-  hoverStrokeWidth: PropTypes.number,
-  fill: PropTypes.string,
-  defined: PropTypes.func,
-  hoverTolerance: PropTypes.number,
-  strokeDasharray: PropTypes.oneOf(strokeDashTypes),
-  highlightOnHover: PropTypes.bool,
-  onClick: PropTypes.func,
-  onDoubleClick: PropTypes.func,
-  onContextMenu: PropTypes.func,
-  yAccessor: PropTypes.func,
-  connectNulls: PropTypes.bool,
-  interpolation: PropTypes.func
+	className: PropTypes.string,
+	strokeWidth: PropTypes.number,
+	stroke: PropTypes.string,
+	lineCap: PropTypes.string,
+	lineJoin: PropTypes.string,
+	hoverStrokeWidth: PropTypes.number,
+	fill: PropTypes.string,
+	defined: PropTypes.func,
+	hoverTolerance: PropTypes.number,
+	strokeDasharray: PropTypes.oneOf(strokeDashTypes),
+	highlightOnHover: PropTypes.bool,
+	onClick: PropTypes.func,
+	onDoubleClick: PropTypes.func,
+	onContextMenu: PropTypes.func,
+	yAccessor: PropTypes.func,
+	connectNulls: PropTypes.bool,
+	interpolation: PropTypes.func
 };
 
 LineSeries.defaultProps = {
-  className: "line ",
-  strokeWidth: 1,
-  hoverStrokeWidth: 4,
-  lineCap: "round",
-  lineJoin: "round",
-  fill: "none",
-  stroke: "#4682B4",
-  strokeDasharray: "Solid",
-  defined: function defined(d) {
-    return !isNaN(d);
-  },
-  hoverTolerance: 6,
-  highlightOnHover: false,
-  connectNulls: false,
-  onClick: function onClick(e) {
-    console.log("Click", e);
-  },
-  onDoubleClick: function onDoubleClick(e) {
-    console.log("Double Click", e);
-  },
-  onContextMenu: function onContextMenu(e) {
-    console.log("Right Click", e);
-  }
+	className: "line ",
+	strokeWidth: 1,
+	hoverStrokeWidth: 4,
+	lineCap: "round",
+	lineJoin: "round",
+	fill: "none",
+	stroke: "#4682B4",
+	strokeDasharray: "Solid",
+	defined: function defined(d) {
+		return !isNaN(d);
+	},
+	hoverTolerance: 6,
+	highlightOnHover: false,
+	connectNulls: false,
+	onClick: function onClick(e) {
+		console.log("Click", e);
+	},
+	onDoubleClick: function onDoubleClick(e) {
+		console.log("Double Click", e);
+	},
+	onContextMenu: function onContextMenu(e) {
+		console.log("Right Click", e);
+	}
 };
 
 export default LineSeries;

@@ -223,16 +223,7 @@ function _drawOnCanvas(ctx, props, moreProps) {
 			ctx.fillStyle = fillStyle;
 
 			values.forEach(function (d) {
-				if (d.width <= 1) {
-					// <line className={d.className} key={idx} x1={d.x} y1={d.y} x2={d.x} y2={d.y + d.height}/>
-					/*
-     ctx.beginPath();
-     ctx.moveTo(d.x, d.y);
-     ctx.lineTo(d.x, d.y + d.height);
-     ctx.stroke();
-     */
-					ctx.fillRect(d.x - 0.5, d.y, 1, d.height);
-				} else if (d.height === 0) {
+				if (d.height === 0) {
 					// <line key={idx} x1={d.x} y1={d.y} x2={d.x + d.width} y2={d.y + d.height} />
 					/*
      ctx.beginPath();
@@ -318,10 +309,10 @@ function getCandleData(props, xAccessor, xScale, yScale, plotData) {
 	var trueOffset = 0.5 * width;
 
 	/*
- const offset = trueOffset > 0.7
- ? Math.round(trueOffset)
- : Math.floor(trueOffset);
- */
+    const offset = trueOffset > 0.7
+ 	? Math.round(trueOffset)
+ 	: Math.floor(trueOffset);
+    */
 
 	// eslint-disable-next-line prefer-const
 	var candles = [];

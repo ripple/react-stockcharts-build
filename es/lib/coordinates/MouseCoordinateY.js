@@ -71,7 +71,7 @@ function customY(props, moreProps) {
 
 	var y = snapY ? yScale(yAccessor(currentItem)) : mouseXY[1];
 
-	//const { displayXAccessor } = moreProps;
+	// const { displayXAccessor } = moreProps;
 	var displayFormat = props.displayFormat;
 
 	var coordinate = snapY ? displayFormat(yAccessor(currentItem)) : displayFormat(yScale.invert(y));
@@ -119,7 +119,6 @@ function helper(props, moreProps) {
 	    width = moreProps.width;
 	var show = moreProps.show,
 	    currentCharts = moreProps.currentCharts,
-	    yScale = moreProps.chartConfig.yScale,
 	    mouseXY = moreProps.mouseXY;
 
 
@@ -131,7 +130,6 @@ function helper(props, moreProps) {
 	    at = props.at,
 	    rectWidth = props.rectWidth,
 	    rectHeight = props.rectHeight,
-	    displayFormat = props.displayFormat,
 	    dx = props.dx;
 	var fill = props.fill,
 	    opacity = props.opacity,

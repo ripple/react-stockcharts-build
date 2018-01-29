@@ -69,7 +69,8 @@ function calculateFullData(props) {
 	    plotFull = props.plotFull,
 	    xScale = props.xScale,
 	    clamp = props.clamp,
-	    pointsPerPxThreshold = props.pointsPerPxThreshold;
+	    pointsPerPxThreshold = props.pointsPerPxThreshold,
+	    flipXScale = props.flipXScale;
 	var xAccessor = props.xAccessor,
 	    displayXAccessor = props.displayXAccessor,
 	    minPointsPerPxThreshold = props.minPointsPerPxThreshold;
@@ -82,7 +83,8 @@ function calculateFullData(props) {
 		useWholeData: useWholeData,
 		clamp: clamp,
 		pointsPerPxThreshold: pointsPerPxThreshold,
-		minPointsPerPxThreshold: minPointsPerPxThreshold
+		minPointsPerPxThreshold: minPointsPerPxThreshold,
+		flipXScale: flipXScale
 	}),
 	    filterData = _evaluator.filterData;
 
@@ -1231,6 +1233,7 @@ var ChartCanvas = function (_Component) {
 							xScale: xScale,
 							xAccessor: xAccessor,
 							focus: defaultFocus,
+							disableInteraction: this.props.disableInteraction,
 
 							getAllPanConditions: this.getAllPanConditions,
 							onContextMenu: this.handleContextMenu,
@@ -1337,8 +1340,9 @@ ChartCanvas.defaultProps = {
 	zoomMultiplier: 1.1,
 	clamp: false,
 	zoomAnchor: mouseBasedZoomAnchor,
-	maintainPointsPerPixelOnResize: true
+	maintainPointsPerPixelOnResize: true,
 	// ratio: 2,
+	disableInteraction: false
 };
 
 ChartCanvas.childContextTypes = {
@@ -1378,7 +1382,8 @@ ChartCanvas.childContextTypes = {
 	unsubscribe: PropTypes.func,
 	setCursorClass: PropTypes.func,
 	generateSubscriptionId: PropTypes.func,
-	getMutableState: PropTypes.func
+	getMutableState: PropTypes.func,
+	disableInteraction: PropTypes.bool
 };
 
 ChartCanvas.ohlcv = function (d) {

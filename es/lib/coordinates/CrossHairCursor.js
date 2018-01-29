@@ -171,8 +171,7 @@ CrossHairCursor.defaultProps = {
 };
 
 function helper(props, moreProps) {
-	var mouseXY = moreProps.mouseXY,
-	    currentItem = moreProps.currentItem,
+	var currentItem = moreProps.currentItem,
 	    show = moreProps.show,
 	    height = moreProps.height,
 	    width = moreProps.width;
