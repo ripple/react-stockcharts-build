@@ -140,6 +140,11 @@ export default function financeDiscontinuousScale(index, futureProvider) {
 		backingLinearScale.nice(m);
 		return scale;
 	};
+	scale.index = function (x) {
+		if (!arguments.length) return index;
+		index = x;
+		return scale;
+	};
 	scale.copy = function () {
 		return financeDiscontinuousScale(index, futureProvider, backingLinearScale.copy());
 	};

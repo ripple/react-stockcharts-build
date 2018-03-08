@@ -9,7 +9,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
+// import ReactDOM from "react-dom";
 
 import { isDefined } from "../utils";
 
@@ -67,12 +67,9 @@ export default function fitWidth(WrappedComponent) {
 			key: "componentDidMount",
 			value: function componentDidMount() {
 				window.addEventListener("resize", this.handleWindowResize);
-				var el = this.node;
-				var w = el.parentNode.clientWidth;
-
+				this.handleWindowResize();
 				/* eslint-disable react/no-did-mount-set-state */
 				this.setState({
-					width: Math.max(w, minWidth),
 					ratio: this.getRatio()
 				});
 				/* eslint-enable react/no-did-mount-set-state */
@@ -90,8 +87,14 @@ export default function fitWidth(WrappedComponent) {
 				this.setState({
 					width: 0
 				}, function () {
-					var el = ReactDOM.findDOMNode(_this2.node); // eslint-disable-line react/no-find-dom-node
-					var w = el.parentNode.clientWidth;
+					var el = _this2.node;
+
+					var _window$getComputedSt = window.getComputedStyle(el.parentNode),
+					    width = _window$getComputedSt.width,
+					    paddingLeft = _window$getComputedSt.paddingLeft,
+					    paddingRight = _window$getComputedSt.paddingRight;
+
+					var w = parseFloat(width) - (parseFloat(paddingLeft) + parseFloat(paddingRight));
 
 					_this2.setState({
 						width: Math.max(w, minWidth)

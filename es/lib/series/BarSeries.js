@@ -132,7 +132,6 @@ function getBars(props, moreProps) {
 		xAccessor: xAccessor,
 		plotData: plotData
 	});
-
 	/*
  const barWidth = Math.round(width);
  const offset = Math.round(barWidth === 1 ? 0 : 0.5 * barWidth);

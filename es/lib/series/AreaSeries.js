@@ -11,11 +11,12 @@ function AreaSeries(props) {
 	    baseAt = props.baseAt;
 	var className = props.className,
 	    opacity = props.opacity,
-	    lineCap = props.lineCap,
-	    lineJoin = props.lineJoin,
 	    stroke = props.stroke,
 	    strokeWidth = props.strokeWidth,
-	    fill = props.fill;
+	    fill = props.fill,
+	    interpolation = props.interpolation,
+	    lineCap = props.lineCap,
+	    lineJoin = props.lineJoin;
 
 
 	return React.createElement(
@@ -25,11 +26,13 @@ function AreaSeries(props) {
 			yAccessor: yAccessor,
 			stroke: stroke, fill: "none",
 			strokeWidth: strokeWidth,
+			interpolation: interpolation,
 			lineCap: lineCap,
 			lineJoin: lineJoin,
 			hoverHighlight: false }),
 		React.createElement(AreaOnlySeries, {
 			yAccessor: yAccessor,
+			interpolation: interpolation,
 			base: baseAt,
 			stroke: "none", fill: fill,
 			opacity: opacity })
@@ -45,7 +48,8 @@ AreaSeries.propTypes = {
 	lineJoin: PropTypes.string,
 	className: PropTypes.string,
 	yAccessor: PropTypes.func.isRequired,
-	baseAt: PropTypes.func
+	baseAt: PropTypes.func,
+	interpolation: PropTypes.func
 };
 
 AreaSeries.defaultProps = {

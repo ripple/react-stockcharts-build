@@ -110,7 +110,17 @@ function doStuff(realDateAccessor, inputDateAccessor, initialIndex, formatters) 
 		var dateAccessor = realDateAccessor(inputDateAccessor);
 		var calculate = discontinuousIndexCalculatorLocalTime.source(dateAccessor).misc({ initialIndex: initialIndex, formatters: formatters });
 
-		var index = calculate(data);
+		var index = calculate(data).map(function (each) {
+			var format = each.format;
+
+			return {
+				// ...each,
+				index: each.index,
+				level: each.level,
+				date: new Date(each.date),
+				format: timeFormat(format)
+			};
+		});
 		/*
   var map = d3Map();
   for (var i = 0; i < data.length - 1; i++) {
@@ -171,17 +181,7 @@ export function discontinuousTimeScaleProviderBuilder() {
 		}
 		// console.log(interval, entries[0].key);
 
-		var inputIndex = index.map(function (each) {
-			var format = each.format;
-
-			return {
-				// ...each,
-				index: each.index,
-				level: each.level,
-				date: new Date(each.date),
-				format: timeFormat(format)
-			};
-		});
+		var inputIndex = index;
 		var xScale = financeDiscontinuousScale(inputIndex);
 
 		var mergedData = zipper().combine(indexMutator);

@@ -43,13 +43,12 @@ function shouldResetChart(thisProps, nextProps) {
 	});
 }
 
-function getCursorStyle(useCrossHairStyleCursor) {
-	var style = "\n\t.react-stockcharts-grabbing-cursor {\n\t\tpointer-events: all;\n\t\tcursor: -moz-grabbing;\n\t\tcursor: -webkit-grabbing;\n\t\tcursor: grabbing;\n\t}\n\t.react-stockcharts-crosshair-cursor {\n\t\tpointer-events: all;\n\t\tcursor: crosshair;\n\t}\n\t.react-stockcharts-tooltip-hover {\n\t\tpointer-events: all;\n\t\tcursor: pointer;\n\t}";
-	var tooltipStyle = "\n\t.react-stockcharts-avoid-interaction {\n\t\tpointer-events: none;\n\t}\n\t.react-stockcharts-enable-interaction {\n\t\tpointer-events: all;\n\t}\n\t.react-stockcharts-tooltip {\n\t\tpointer-events: all;\n\t\tcursor: pointer;\n\t}\n\t.react-stockcharts-default-cursor {\n\t\tcursor: default;\n\t}\n\t.react-stockcharts-move-cursor {\n\t\tcursor: move;\n\t}\n\t.react-stockcharts-pointer-cursor {\n\t\tcursor: pointer;\n\t}\n\t.react-stockcharts-ns-resize-cursor {\n\t\tcursor: ns-resize;\n\t}\n\t.react-stockcharts-ew-resize-cursor {\n\t\tcursor: ew-resize;\n\t}";
+function getCursorStyle() {
+	var tooltipStyle = "\n\t.react-stockcharts-grabbing-cursor {\n\t\tpointer-events: all;\n\t\tcursor: -moz-grabbing;\n\t\tcursor: -webkit-grabbing;\n\t\tcursor: grabbing;\n\t}\n\t.react-stockcharts-crosshair-cursor {\n\t\tpointer-events: all;\n\t\tcursor: crosshair;\n\t}\n\t.react-stockcharts-tooltip-hover {\n\t\tpointer-events: all;\n\t\tcursor: pointer;\n\t}\n\t.react-stockcharts-avoid-interaction {\n\t\tpointer-events: none;\n\t}\n\t.react-stockcharts-enable-interaction {\n\t\tpointer-events: all;\n\t}\n\t.react-stockcharts-tooltip {\n\t\tpointer-events: all;\n\t\tcursor: pointer;\n\t}\n\t.react-stockcharts-default-cursor {\n\t\tcursor: default;\n\t}\n\t.react-stockcharts-move-cursor {\n\t\tcursor: move;\n\t}\n\t.react-stockcharts-pointer-cursor {\n\t\tcursor: pointer;\n\t}\n\t.react-stockcharts-ns-resize-cursor {\n\t\tcursor: ns-resize;\n\t}\n\t.react-stockcharts-ew-resize-cursor {\n\t\tcursor: ew-resize;\n\t}";
 	return React.createElement(
 		"style",
 		{ type: "text/css" },
-		useCrossHairStyleCursor ? style + tooltipStyle : tooltipStyle
+		tooltipStyle
 	);
 }
 
@@ -1190,7 +1189,8 @@ var ChartCanvas = function (_Component) {
 
 			var interaction = isInteractionEnabled(xScale, xAccessor, plotData);
 
-			var cursor = getCursorStyle(useCrossHairStyleCursor && interaction);
+			var cursorStyle = useCrossHairStyleCursor && interaction;
+			var cursor = getCursorStyle();
 			return React.createElement(
 				"div",
 				{ style: { position: "relative", width: width, height: height }, className: className, onClick: onSelect },
@@ -1223,6 +1223,7 @@ var ChartCanvas = function (_Component) {
 						{ transform: "translate(" + (margin.left + 0.5) + ", " + (margin.top + 0.5) + ")" },
 						React.createElement(EventCapture, {
 							ref: this.saveEventCaptureNode,
+							useCrossHairStyleCursor: cursorStyle,
 							mouseMove: mouseMoveEvent && interaction,
 							zoom: zoomEvent && interaction,
 							pan: panEvent && interaction,
@@ -1315,7 +1316,8 @@ ChartCanvas.propTypes = {
 	clamp: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 	zoomEvent: PropTypes.bool,
 	onSelect: PropTypes.func,
-	maintainPointsPerPixelOnResize: PropTypes.bool
+	maintainPointsPerPixelOnResize: PropTypes.bool,
+	disableInteraction: PropTypes.bool
 };
 
 ChartCanvas.defaultProps = {
@@ -1382,8 +1384,7 @@ ChartCanvas.childContextTypes = {
 	unsubscribe: PropTypes.func,
 	setCursorClass: PropTypes.func,
 	generateSubscriptionId: PropTypes.func,
-	getMutableState: PropTypes.func,
-	disableInteraction: PropTypes.bool
+	getMutableState: PropTypes.func
 };
 
 ChartCanvas.ohlcv = function (d) {

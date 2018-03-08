@@ -1,5 +1,7 @@
 "use strict";
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -73,6 +75,9 @@ PriceCoordinate.propTypes = {
 	fontFamily: PropTypes.string,
 	fontSize: PropTypes.number,
 	fill: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+	stroke: PropTypes.string,
+	strokeOpacity: PropTypes.number,
+	strokeWidth: PropTypes.number,
 	textFill: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
 };
 
@@ -91,26 +96,30 @@ PriceCoordinate.defaultProps = {
 	lineStroke: "#000000",
 	fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
 	fontSize: 13,
-	textFill: "#FFFFFF"
+	textFill: "#FFFFFF",
+	strokeOpacity: 1,
+	strokeWidth: 1
 };
 
 function helper(props, moreProps) {
 	var width = moreProps.width;
 	var yScale = moreProps.chartConfig.yScale;
 
-	var lowerPrice = yScale.domain()[0];
-	var upperPrice = yScale.domain()[1];
-	var lowerYValue = yScale.range()[0];
-	var upperYValue = yScale.range()[1];
-	var rangeSlope = (lowerPrice - upperPrice) / (lowerYValue - upperYValue);
+	var _yScale$domain = yScale.domain(),
+	    _yScale$domain2 = _slicedToArray(_yScale$domain, 2),
+	    lowerYValue = _yScale$domain2[0],
+	    upperYValue = _yScale$domain2[1];
 
+	var price = props.price,
+	    stroke = props.stroke,
+	    strokeOpacity = props.strokeOpacity,
+	    strokeWidth = props.strokeWidth;
 	var orient = props.orient,
 	    at = props.at,
 	    rectWidth = props.rectWidth,
 	    rectHeight = props.rectHeight,
 	    displayFormat = props.displayFormat,
-	    dx = props.dx,
-	    price = props.price;
+	    dx = props.dx;
 	var fill = props.fill,
 	    opacity = props.opacity,
 	    fontFamily = props.fontFamily,
@@ -126,17 +135,9 @@ function helper(props, moreProps) {
 	var edgeAt = at === "right" ? width : 0;
 
 	var type = "horizontal";
-	var priceShowTolerance = 5;
 
-	var y = 0;
-	var show = void 0;
-
-	if (price < upperPrice + priceShowTolerance || price > lowerPrice - priceShowTolerance) {
-		y = price / rangeSlope + (lowerYValue - lowerPrice / rangeSlope);
-		show = true;
-	} else {
-		show = false;
-	}
+	var y = yScale(price);
+	var show = price <= upperYValue && price >= lowerYValue;
 
 	var coordinate = displayFormat(yScale.invert(y));
 	var hideLine = false;
@@ -150,6 +151,9 @@ function helper(props, moreProps) {
 		hideLine: hideLine,
 		lineOpacity: lineOpacity,
 		lineStroke: lineStroke,
+		stroke: stroke,
+		strokeOpacity: strokeOpacity,
+		strokeWidth: strokeWidth,
 		fill: functor(fill)(price),
 		textFill: functor(textFill)(price),
 		opacity: opacity, fontFamily: fontFamily, fontSize: fontSize,

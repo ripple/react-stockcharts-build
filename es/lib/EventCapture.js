@@ -614,15 +614,16 @@ var EventCapture = function (_Component) {
 			var _props13 = this.props,
 			    height = _props13.height,
 			    width = _props13.width,
-			    disableInteraction = _props13.disableInteraction;
+			    disableInteraction = _props13.disableInteraction,
+			    useCrossHairStyleCursor = _props13.useCrossHairStyleCursor;
 
-			var className = this.state.cursorOverrideClass != null ? this.state.cursorOverrideClass : this.state.panInProgress ? "react-stockcharts-grabbing-cursor" : "react-stockcharts-crosshair-cursor";
+			var className = this.state.cursorOverrideClass != null ? this.state.cursorOverrideClass : useCrossHairStyleCursor ? "" : this.state.panInProgress ? "react-stockcharts-grabbing-cursor" : "react-stockcharts-crosshair-cursor";
 
 			var interactionProps = disableInteraction || {
 				onWheel: this.handleWheel,
 				onMouseDown: this.handleMouseDown,
 				onClick: this.handleClick,
-				onContextMenu: this.handleContextMenu,
+				onContextMenu: this.handleRightClick,
 				onTouchStart: this.handleTouchStart,
 				onTouchMove: this.handleTouchMove
 			};
@@ -649,6 +650,7 @@ EventCapture.propTypes = {
 	pan: PropTypes.bool.isRequired,
 	panSpeedMultiplier: PropTypes.number.isRequired,
 	focus: PropTypes.bool.isRequired,
+	useCrossHairStyleCursor: PropTypes.bool.isRequired,
 
 	width: PropTypes.number.isRequired,
 	height: PropTypes.number.isRequired,
