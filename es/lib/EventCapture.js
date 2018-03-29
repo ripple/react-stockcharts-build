@@ -39,6 +39,7 @@ var EventCapture = function (_Component) {
 		_this.handlePan = _this.handlePan.bind(_this);
 		_this.handleTouchStart = _this.handleTouchStart.bind(_this);
 		_this.handleTouchMove = _this.handleTouchMove.bind(_this);
+		_this.handleTouchEnd = _this.handleTouchEnd.bind(_this);
 		_this.handlePinchZoom = _this.handlePinchZoom.bind(_this);
 		_this.handlePinchZoomEnd = _this.handlePinchZoomEnd.bind(_this);
 
@@ -550,6 +551,11 @@ var EventCapture = function (_Component) {
 			}
 		}
 	}, {
+		key: "handleTouchEnd",
+		value: function handleTouchEnd(e) {
+			this.handleLeave(e);
+		}
+	}, {
 		key: "handlePinchZoom",
 		value: function handlePinchZoom() {
 			var e = d3Event;
@@ -630,7 +636,8 @@ var EventCapture = function (_Component) {
 				onClick: this.handleClick,
 				onContextMenu: this.handleRightClick,
 				onTouchStart: this.handleTouchStart,
-				onTouchMove: this.handleTouchMove
+				onTouchMove: this.handleTouchMove,
+				onTouchEnd: this.handleTouchEnd
 			};
 
 			return React.createElement("rect", _extends({ ref: this.saveNode,
