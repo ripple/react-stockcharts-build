@@ -1,5 +1,3 @@
-"use strict";
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -33,8 +31,6 @@ var DrawingObjectSelector = function (_Component) {
 	_createClass(DrawingObjectSelector, [{
 		key: "handleDoubleClick",
 		value: function handleDoubleClick(moreProps, e) {
-			console.log("Double Click");
-
 			e.preventDefault();
 			var onDoubleClick = this.props.onDoubleClick;
 			var enabled = this.props.enabled;
@@ -42,12 +38,17 @@ var DrawingObjectSelector = function (_Component) {
 			if (!enabled) return;
 
 			var interactives = this.getInteraction(moreProps);
-			var selected = getSelected(interactives);
+			var allSelected = getSelected(interactives);
 
 			// console.log(selected, interactives)
-			if (selected.length > 0) {
-				var item = head(selected);
-				var morePropsForChart = getMorePropsForChart(moreProps, item.chartId);
+			if (allSelected.length > 0) {
+				var selected = head(allSelected);
+				var item = {
+					type: selected.type,
+					chartId: selected.chartId,
+					object: head(selected.objects)
+				};
+				var morePropsForChart = getMorePropsForChart(moreProps, selected.chartId);
 				onDoubleClick(item, morePropsForChart);
 			}
 		}

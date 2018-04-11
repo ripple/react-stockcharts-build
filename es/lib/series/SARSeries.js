@@ -1,5 +1,3 @@
-"use strict";
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -16,7 +14,7 @@ import PropTypes from "prop-types";
 import GenericChartComponent from "../GenericChartComponent";
 import { getAxisCanvas, getMouseCanvas } from "../GenericComponent";
 
-import { first, last, hexToRGBA } from "../utils";
+import { isDefined, first, last, hexToRGBA } from "../utils";
 
 var SARSeries = function (_Component) {
 	_inherits(SARSeries, _Component);
@@ -94,7 +92,9 @@ var SARSeries = function (_Component) {
 			return React.createElement(
 				"g",
 				{ className: className },
-				plotData.map(function (each, idx) {
+				plotData.filter(function (each) {
+					return isDefined(yAccessor(each));
+				}).map(function (each, idx) {
 					return React.createElement("circle", { key: idx, cx: xScale(xAccessor(each)),
 						cy: yScale(yAccessor(each)), r: 3, fill: "green" });
 				})

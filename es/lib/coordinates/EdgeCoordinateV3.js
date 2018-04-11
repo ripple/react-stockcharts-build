@@ -1,5 +1,3 @@
-"use strict";
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 import React from "react";
@@ -19,9 +17,15 @@ export function renderSVG(props) {
 
 	if (isDefined(edge.line)) {
 		line = React.createElement("line", {
-			className: "react-stockcharts-cross-hair", opacity: edge.line.opacity, stroke: edge.line.stroke,
-			x1: edge.line.x1, y1: edge.line.y1,
-			x2: edge.line.x2, y2: edge.line.y2 });
+			className: "react-stockcharts-cross-hair",
+			strokeOpacity: edge.line.opacity,
+			stroke: edge.line.stroke,
+			strokeDasharray: getStrokeDasharray(edge.line.strokeDasharray),
+			x1: edge.line.x1,
+			y1: edge.line.y1,
+			x2: edge.line.x2,
+			y2: edge.line.y2
+		});
 	}
 	if (isDefined(edge.coordinateBase)) {
 		var _edge$coordinateBase = edge.coordinateBase,
@@ -34,24 +38,45 @@ export function renderSVG(props) {
 
 		coordinateBase = edge.orient === "left" || edge.orient === "right" ? React.createElement(
 			"g",
-			{ transform: "translate(" + edge.coordinateBase.edgeXRect + "," + edge.coordinateBase.edgeYRect + ")" },
-			React.createElement("path", { d: path, key: 1, className: "react-stockchart-text-background",
-				height: rectHeight, width: rectWidth,
-				fill: edge.coordinateBase.fill, opacity: edge.coordinateBase.opacity })
-		) : React.createElement("rect", { key: 1, className: "react-stockchart-text-background",
+			{
+				key: 1,
+				transform: "translate(" + edge.coordinateBase.edgeXRect + "," + edge.coordinateBase.edgeYRect + ")"
+			},
+			React.createElement("path", {
+				d: path,
+				className: "react-stockchart-text-background",
+				height: rectHeight,
+				width: rectWidth,
+				stroke: edge.coordinateBase.stroke,
+				strokeLinejoin: "miter",
+				strokeOpacity: edge.coordinateBase.strokeOpacity,
+				strokeWidth: edge.coordinateBase.strokeWidth,
+				fill: edge.coordinateBase.fill,
+				fillOpacity: edge.coordinateBase.opacity
+			})
+		) : React.createElement("rect", {
+			key: 1,
+			className: "react-stockchart-text-background",
 			x: edge.coordinateBase.edgeXRect,
 			y: edge.coordinateBase.edgeYRect,
-			height: rectHeight, width: rectWidth,
-			fill: edge.coordinateBase.fill, opacity: edge.coordinateBase.opacity });
+			height: rectHeight,
+			width: rectWidth,
+			fill: edge.coordinateBase.fill,
+			opacity: edge.coordinateBase.opacity
+		});
 
 		coordinate = React.createElement(
 			"text",
-			{ key: 2, x: edge.coordinate.edgeXText,
+			{
+				key: 2,
+				x: edge.coordinate.edgeXText,
 				y: edge.coordinate.edgeYText,
 				textAnchor: edge.coordinate.textAnchor,
 				fontFamily: edge.coordinate.fontFamily,
 				fontSize: edge.coordinate.fontSize,
-				dy: ".32em", fill: edge.coordinate.textFill },
+				dy: ".32em",
+				fill: edge.coordinate.textFill
+			},
 			edge.coordinate.displayCoordinate
 		);
 	}
@@ -108,7 +133,7 @@ function helper(props) {
 
 		if (type === "horizontal") {
 			edgeXRect = dx + (orient === "right" ? edgeAt + 1 : edgeAt - rectWidth - 1);
-			edgeYRect = y1 - rectHeight / 2;
+			edgeYRect = y1 - rectHeight / 2 - strokeWidth;
 			edgeXText = dx + (orient === "right" ? edgeAt + rectWidth / 2 : edgeAt - rectWidth / 2);
 			edgeYText = y1;
 		} else {
@@ -120,10 +145,26 @@ function helper(props) {
 		}
 
 		coordinateBase = {
-			edgeXRect: edgeXRect, edgeYRect: edgeYRect, rectHeight: rectHeight, rectWidth: rectWidth, rectRadius: rectRadius, fill: fill, opacity: opacity, arrowWidth: arrowWidth, stroke: stroke, strokeOpacity: strokeOpacity, strokeWidth: strokeWidth
+			edgeXRect: edgeXRect,
+			edgeYRect: edgeYRect,
+			rectHeight: rectHeight + strokeWidth,
+			rectWidth: rectWidth,
+			rectRadius: rectRadius,
+			fill: fill,
+			opacity: opacity,
+			arrowWidth: arrowWidth,
+			stroke: stroke,
+			strokeOpacity: strokeOpacity,
+			strokeWidth: strokeWidth
 		};
 		coordinate = {
-			edgeXText: edgeXText, edgeYText: edgeYText, textAnchor: textAnchor, fontFamily: fontFamily, fontSize: fontSize, textFill: textFill, displayCoordinate: displayCoordinate
+			edgeXText: edgeXText,
+			edgeYText: edgeYText,
+			textAnchor: textAnchor,
+			fontFamily: fontFamily,
+			fontSize: fontSize,
+			textFill: textFill,
+			displayCoordinate: displayCoordinate
 		};
 	}
 
@@ -131,11 +172,17 @@ function helper(props) {
 		opacity: lineOpacity,
 		stroke: lineStroke,
 		strokeDasharray: lineStrokeDasharray,
-		x1: x1, y1: y1, x2: x2, y2: y2
+		x1: x1,
+		y1: y1,
+		x2: x2,
+		y2: y2
 	};
 
 	return {
-		coordinateBase: coordinateBase, coordinate: coordinate, line: line, orient: orient
+		coordinateBase: coordinateBase,
+		coordinate: coordinate,
+		line: line,
+		orient: orient
 	};
 }
 
@@ -165,6 +212,7 @@ export function drawOnCanvas(ctx, props) {
 		ctx.stroke();
 	}
 
+	ctx.setLineDash([]);
 	if (isDefined(edge.coordinateBase)) {
 		var _edge$coordinateBase2 = edge.coordinateBase,
 		    rectWidth = _edge$coordinateBase2.rectWidth,

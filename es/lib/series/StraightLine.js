@@ -1,5 +1,3 @@
-"use strict";
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -97,17 +95,12 @@ var StraightLine = function (_Component) {
 
 			var lineCoordinates = getLineCoordinates(type, xScale, yScale, xValue, yValue, width, height);
 
-			/*
-   type === "horizontal"
-   	? { x1: xScale(first), y1: yScale(yValue), x2: xScale(last), y2: yScale(yValue) }
-   	: { x1: xScale(xValue), y1: yScale(0), x2: xScale(xValue), y2: yScale(height) };*/
-
 			return React.createElement("line", _extends({
 				className: className,
 				strokeDasharray: getStrokeDasharray(strokeDasharray),
 				stroke: stroke,
 				strokeWidth: strokeWidth,
-				opacity: opacity
+				strokeOpacity: opacity
 			}, lineCoordinates));
 		}
 	}]);
@@ -116,7 +109,7 @@ var StraightLine = function (_Component) {
 }(Component);
 
 function getLineCoordinates(type, xScale, yScale, xValue, yValue, width, height) {
-	return type === "horizontal" ? { x1: 0, y1: yScale(yValue), x2: width, y2: yScale(yValue) } : { x1: xScale(xValue), y1: 0, x2: xScale(xValue), y2: height };
+	return type === "horizontal" ? { x1: 0, y1: Math.round(yScale(yValue)), x2: width, y2: Math.round(yScale(yValue)) } : { x1: Math.round(xScale(xValue)), y1: 0, x2: Math.round(xScale(xValue)), y2: height };
 }
 
 StraightLine.propTypes = {

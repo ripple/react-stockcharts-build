@@ -1,5 +1,14 @@
 export var strokeDashTypes = ["Solid", "ShortDash", "ShortDot", "ShortDashDot", "ShortDashDotDot", "Dot", "Dash", "LongDash", "DashDot", "LongDashDot", "LongDashDotDot"];
 
+export function getStrokeDasharrayCanvas(type) {
+	var a = getStrokeDasharray(type).split(",");
+
+	if (a.length === 1) return [];
+
+	return a.map(function (d) {
+		return Number(d);
+	});
+}
 export var getStrokeDasharray = function getStrokeDasharray(type) {
 	switch (type) {
 		default:

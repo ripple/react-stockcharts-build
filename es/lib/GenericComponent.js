@@ -1,5 +1,3 @@
-"use strict";
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -209,7 +207,7 @@ var GenericComponent = function (_Component) {
 					}
 				case "dragstart":
 					{
-						if (this.moreProps.hovering && this.props.selected) {
+						if (this.getPanConditions().draggable) {
 							var _amIOnTop = this.context.amIOnTop;
 
 							if (_amIOnTop(this.suscriberId)) {
@@ -255,7 +253,7 @@ var GenericComponent = function (_Component) {
 	}, {
 		key: "getPanConditions",
 		value: function getPanConditions() {
-			var draggable = !!(this.props.selected && this.moreProps.hovering);
+			var draggable = !!(this.props.selected && this.moreProps.hovering) || this.props.enableDragOnHover && this.moreProps.hovering;
 
 			return {
 				draggable: draggable,
@@ -314,6 +312,11 @@ var GenericComponent = function (_Component) {
 			var unsubscribe = this.context.unsubscribe;
 
 			unsubscribe(this.suscriberId);
+			if (this.iSetTheCursorClass) {
+				var setCursorClass = this.context.setCursorClass;
+
+				setCursorClass(null);
+			}
 		}
 	}, {
 		key: "componentDidMount",
@@ -333,7 +336,13 @@ var GenericComponent = function (_Component) {
 			if (prevProps.selected !== selected) {
 				var setCursorClass = this.context.setCursorClass;
 
-				setCursorClass(selected && this.moreProps.hovering ? interactiveCursorClass : null);
+				if (selected && this.moreProps.hovering) {
+					this.iSetTheCursorClass = true;
+					setCursorClass(interactiveCursorClass);
+				} else {
+					this.iSetTheCursorClass = false;
+					setCursorClass(null);
+				}
 			}
 			if (isDefined(canvasDraw) && !this.evaluationInProgress
 			// && !(this.someDragInProgress && this.props.selected)
@@ -342,6 +351,8 @@ var GenericComponent = function (_Component) {
    during dragging / hover / click etc.
    */
 			&& chartCanvasType !== "svg") {
+
+				this.updateMoreProps(this.moreProps);
 				this.drawOnCanvas();
 			}
 		}
@@ -459,6 +470,7 @@ GenericComponent.propTypes = {
 	interactiveCursorClass: PropTypes.string,
 
 	selected: PropTypes.bool.isRequired,
+	enableDragOnHover: PropTypes.bool.isRequired,
 	disablePan: PropTypes.bool.isRequired,
 
 	canvasToDraw: PropTypes.func.isRequired,
@@ -497,6 +509,7 @@ GenericComponent.defaultProps = {
 	edgeClip: false,
 	selected: false,
 	disablePan: false,
+	enableDragOnHover: false,
 
 	onClickWhenHover: noop,
 	onClickOutside: noop,

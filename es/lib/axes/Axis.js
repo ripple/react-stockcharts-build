@@ -1,5 +1,3 @@
-"use strict";
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -153,8 +151,9 @@ Axis.propTypes = {
 	tickStrokeOpacity: PropTypes.number,
 	tickStrokeWidth: PropTypes.number,
 	tickStrokeDasharray: PropTypes.oneOf(strokeDashTypes),
-	tickValues: PropTypes.array,
+	tickValues: PropTypes.oneOfType([PropTypes.array, PropTypes.func]),
 	tickInterval: PropTypes.number,
+	tickIntervalFunction: PropTypes.func,
 	showDomain: PropTypes.bool,
 	showTicks: PropTypes.bool,
 	className: PropTypes.string,
@@ -196,20 +195,27 @@ function tickHelper(props, scale) {
 	    tickValuesProp = props.tickValues,
 	    tickStroke = props.tickStroke,
 	    tickStrokeOpacity = props.tickStrokeOpacity,
-	    tickInterval = props.tickInterval;
+	    tickInterval = props.tickInterval,
+	    tickIntervalFunction = props.tickIntervalFunction;
 
 	// if (tickArguments) tickArguments = [tickArguments];
 
 	var tickValues = void 0;
 	if (isDefined(tickValuesProp)) {
-		tickValues = tickValuesProp;
+		if (typeof tickValuesProp === 'function') {
+			tickValues = tickValuesProp(scale.domain());
+		} else {
+			tickValues = tickValuesProp;
+		}
 	} else if (isDefined(tickInterval)) {
 		var _scale$domain = scale.domain(),
 		    _scale$domain2 = _slicedToArray(_scale$domain, 2),
 		    min = _scale$domain2[0],
 		    max = _scale$domain2[1];
 
-		tickValues = d3Range(min, max, (max - min) / tickInterval);
+		var baseTickValues = d3Range(min, max, (max - min) / tickInterval);
+
+		tickValues = tickIntervalFunction ? tickIntervalFunction(min, max, tickInterval) : baseTickValues;
 	} else if (isDefined(scale.ticks)) {
 		tickValues = scale.ticks(tickArguments, flexTicks);
 	} else {

@@ -1,4 +1,4 @@
-"use strict";
+
 
 export var themes = {
 	light: {

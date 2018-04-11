@@ -1,5 +1,3 @@
-"use strict";
-
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -16,7 +14,7 @@ import PropTypes from "prop-types";
 import { drawOnCanvas as _drawOnCanvas, renderSVG as _renderSVG } from "./EdgeCoordinateV3";
 import GenericChartComponent from "../GenericChartComponent";
 import { getAxisCanvas } from "../GenericComponent";
-import { functor } from "../utils";
+import { functor, strokeDashTypes } from "../utils";
 
 var PriceCoordinate = function (_Component) {
 	_inherits(PriceCoordinate, _Component);
@@ -75,6 +73,7 @@ PriceCoordinate.propTypes = {
 	fontFamily: PropTypes.string,
 	fontSize: PropTypes.number,
 	fill: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+	strokeDasharray: PropTypes.oneOf(strokeDashTypes),
 	stroke: PropTypes.string,
 	strokeOpacity: PropTypes.number,
 	strokeWidth: PropTypes.number,
@@ -98,7 +97,8 @@ PriceCoordinate.defaultProps = {
 	fontSize: 13,
 	textFill: "#FFFFFF",
 	strokeOpacity: 1,
-	strokeWidth: 1
+	strokeWidth: 1,
+	strokeDasharray: "Solid"
 };
 
 function helper(props, moreProps) {
@@ -112,6 +112,7 @@ function helper(props, moreProps) {
 
 	var price = props.price,
 	    stroke = props.stroke,
+	    strokeDasharray = props.strokeDasharray,
 	    strokeOpacity = props.strokeOpacity,
 	    strokeWidth = props.strokeWidth;
 	var orient = props.orient,
@@ -151,6 +152,7 @@ function helper(props, moreProps) {
 		hideLine: hideLine,
 		lineOpacity: lineOpacity,
 		lineStroke: lineStroke,
+		lineStrokeDasharray: strokeDasharray,
 		stroke: stroke,
 		strokeOpacity: strokeOpacity,
 		strokeWidth: strokeWidth,

@@ -1,5 +1,3 @@
-"use strict";
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41,11 +39,18 @@ var AreaOnlySeries = function (_Component) {
 			    fill = _props2.fill,
 			    stroke = _props2.stroke,
 			    opacity = _props2.opacity,
-			    interpolation = _props2.interpolation;
+			    interpolation = _props2.interpolation,
+			    canvasClip = _props2.canvasClip;
 			var xScale = moreProps.xScale,
 			    yScale = moreProps.chartConfig.yScale,
 			    plotData = moreProps.plotData,
 			    xAccessor = moreProps.xAccessor;
+
+
+			if (canvasClip) {
+				ctx.save();
+				canvasClip(ctx, moreProps);
+			}
 
 			ctx.fillStyle = hexToRGBA(fill, opacity);
 			ctx.strokeStyle = stroke;
@@ -55,11 +60,11 @@ var AreaOnlySeries = function (_Component) {
 			var areaSeries = d3Area().defined(function (d) {
 				return defined(yAccessor(d));
 			}).x(function (d) {
-				return xScale(xAccessor(d));
+				return Math.round(xScale(xAccessor(d)));
 			}).y0(function (d) {
 				return newBase(yScale, d, moreProps);
 			}).y1(function (d) {
-				return yScale(yAccessor(d));
+				return Math.round(yScale(yAccessor(d)));
 			}).context(ctx);
 
 			if (isDefined(interpolation)) {
@@ -67,6 +72,10 @@ var AreaOnlySeries = function (_Component) {
 			}
 			areaSeries(plotData);
 			ctx.fill();
+
+			if (canvasClip) {
+				ctx.restore();
+			}
 		}
 	}, {
 		key: "renderSVG",
@@ -74,7 +83,8 @@ var AreaOnlySeries = function (_Component) {
 			var _props3 = this.props,
 			    yAccessor = _props3.yAccessor,
 			    defined = _props3.defined,
-			    base = _props3.base;
+			    base = _props3.base,
+			    style = _props3.style;
 			var _props4 = this.props,
 			    stroke = _props4.stroke,
 			    fill = _props4.fill,
@@ -91,11 +101,11 @@ var AreaOnlySeries = function (_Component) {
 			var areaSeries = d3Area().defined(function (d) {
 				return defined(yAccessor(d));
 			}).x(function (d) {
-				return xScale(xAccessor(d));
+				return Math.round(xScale(xAccessor(d)));
 			}).y0(function (d) {
 				return newBase(yScale, d, moreProps);
 			}).y1(function (d) {
-				return yScale(yAccessor(d));
+				return Math.round(yScale(yAccessor(d)));
 			});
 
 			if (isDefined(interpolation)) {
@@ -104,7 +114,14 @@ var AreaOnlySeries = function (_Component) {
 
 			var d = areaSeries(plotData);
 			var newClassName = className.concat(isDefined(stroke) ? "" : " line-stroke");
-			return React.createElement("path", { d: d, stroke: stroke, fill: fill, className: newClassName, opacity: opacity });
+			return React.createElement("path", {
+				style: style,
+				d: d,
+				stroke: stroke,
+				fill: fill,
+				className: newClassName,
+				fillOpacity: opacity
+			});
 		}
 	}, {
 		key: "render",
@@ -129,7 +146,9 @@ AreaOnlySeries.propTypes = {
 	opacity: PropTypes.number,
 	defined: PropTypes.func,
 	base: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
-	interpolation: PropTypes.func
+	interpolation: PropTypes.func,
+	canvasClip: PropTypes.func,
+	style: PropTypes.object
 };
 
 AreaOnlySeries.defaultProps = {

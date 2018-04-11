@@ -1,10 +1,10 @@
-"use strict";
 
 import React from "react";
 import PropTypes from "prop-types";
 
 import LineSeries from "./LineSeries";
 import AreaOnlySeries from "./AreaOnlySeries";
+import { strokeDashTypes } from "../utils";
 
 function AreaSeries(props) {
 	var yAccessor = props.yAccessor,
@@ -13,29 +13,43 @@ function AreaSeries(props) {
 	    opacity = props.opacity,
 	    stroke = props.stroke,
 	    strokeWidth = props.strokeWidth,
+	    strokeOpacity = props.strokeOpacity,
+	    strokeDasharray = props.strokeDasharray,
+	    lineCap = props.lineCap,
+	    lineJoin = props.lineJoin,
 	    fill = props.fill,
 	    interpolation = props.interpolation,
-	    lineCap = props.lineCap,
-	    lineJoin = props.lineJoin;
+	    style = props.style,
+	    canvasClip = props.canvasClip;
 
 
 	return React.createElement(
 		"g",
 		{ className: className },
-		React.createElement(LineSeries, {
-			yAccessor: yAccessor,
-			stroke: stroke, fill: "none",
-			strokeWidth: strokeWidth,
-			interpolation: interpolation,
-			lineCap: lineCap,
-			lineJoin: lineJoin,
-			hoverHighlight: false }),
 		React.createElement(AreaOnlySeries, {
 			yAccessor: yAccessor,
 			interpolation: interpolation,
 			base: baseAt,
-			stroke: "none", fill: fill,
-			opacity: opacity })
+			fill: fill,
+			opacity: opacity,
+			style: style,
+			canvasClip: canvasClip,
+			stroke: "none"
+		}),
+		React.createElement(LineSeries, {
+			yAccessor: yAccessor,
+			stroke: stroke,
+			strokeWidth: strokeWidth,
+			strokeOpacity: strokeOpacity,
+			strokeDasharray: strokeDasharray,
+			lineCap: lineCap,
+			lineJoin: lineJoin,
+			interpolation: interpolation,
+			style: style,
+			canvasClip: canvasClip,
+			fill: "none",
+			hoverHighlight: false
+		})
 	);
 }
 
@@ -43,18 +57,24 @@ AreaSeries.propTypes = {
 	stroke: PropTypes.string,
 	strokeWidth: PropTypes.number,
 	fill: PropTypes.string.isRequired,
+	strokeOpacity: PropTypes.number.isRequired,
 	opacity: PropTypes.number.isRequired,
 	lineCap: PropTypes.string,
 	lineJoin: PropTypes.string,
 	className: PropTypes.string,
 	yAccessor: PropTypes.func.isRequired,
 	baseAt: PropTypes.func,
-	interpolation: PropTypes.func
+	interpolation: PropTypes.func,
+	canvasClip: PropTypes.func,
+	style: PropTypes.object,
+	strokeDasharray: PropTypes.oneOf(strokeDashTypes)
 };
 
 AreaSeries.defaultProps = {
 	stroke: "#4682B4",
 	strokeWidth: 1,
+	strokeOpacity: 1,
+	strokeDasharray: "Solid",
 	opacity: 0.5,
 	fill: "#4682B4",
 	className: "react-stockcharts-area"

@@ -1,5 +1,3 @@
-"use strict";
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -249,9 +247,6 @@ function calculateState(props) {
 	    plotData = _filterData.plotData,
 	    domain = _filterData.domain;
 
-	if (process.env.NODE_ENV !== "production" && plotData.length <= 1) {
-		throw new Error("Showing " + plotData.length + " datapoints, review the 'xExtents' prop of ChartCanvas");
-	}
 	return {
 		plotData: plotData,
 		xScale: updatedXScale.domain(domain),
@@ -574,8 +569,8 @@ var ChartCanvas = function (_Component) {
 		value: function handlePinchZoom(initialPinch, finalPinch, e) {
 			var _this2 = this;
 
-			if (!this.waitingForAnimationFrame) {
-				this.waitingForAnimationFrame = true;
+			if (!this.waitingForPinchZoomAnimationFrame) {
+				this.waitingForPinchZoomAnimationFrame = true;
 				var state = this.pinchZoomHelper(initialPinch, finalPinch);
 
 				this.triggerEvent("pinchzoom", state, e);
@@ -585,7 +580,7 @@ var ChartCanvas = function (_Component) {
 				requestAnimationFrame(function () {
 					_this2.clearBothCanvas();
 					_this2.draw({ trigger: "pinchzoom" });
-					_this2.waitingForAnimationFrame = false;
+					_this2.waitingForPinchZoomAnimationFrame = false;
 				});
 			}
 		}
@@ -910,8 +905,8 @@ var ChartCanvas = function (_Component) {
 		value: function handleMouseMove(mouseXY, inputType, e) {
 			var _this6 = this;
 
-			if (!this.waitingForAnimationFrame) {
-				this.waitingForAnimationFrame = true;
+			if (!this.waitingForMouseMoveAnimationFrame) {
+				this.waitingForMouseMoveAnimationFrame = true;
 
 				var _state6 = this.state,
 				    chartConfig = _state6.chartConfig,
@@ -940,7 +935,7 @@ var ChartCanvas = function (_Component) {
 				requestAnimationFrame(function () {
 					_this6.clearMouseCanvas();
 					_this6.draw({ trigger: "mousemove" });
-					_this6.waitingForAnimationFrame = false;
+					_this6.waitingForMouseMoveAnimationFrame = false;
 				});
 			}
 		}
@@ -1313,7 +1308,7 @@ ChartCanvas.propTypes = {
 	},
 	mouseMoveEvent: PropTypes.bool,
 	panEvent: PropTypes.bool,
-	clamp: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+	clamp: PropTypes.oneOfType([PropTypes.string, PropTypes.bool, PropTypes.func]),
 	zoomEvent: PropTypes.bool,
 	onSelect: PropTypes.func,
 	maintainPointsPerPixelOnResize: PropTypes.bool,

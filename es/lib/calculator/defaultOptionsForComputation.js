@@ -1,4 +1,4 @@
-"use strict";
+
 
 export var BollingerBand = {
 	windowSize: 20,

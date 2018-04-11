@@ -151,8 +151,9 @@ function helper(props, moreProps) {
 	    bgWidth = props.bgWidth,
 	    bgHeight = props.bgHeight;
 	var mouseXY = moreProps.mouseXY,
-	    height = moreProps.height,
-	    width = moreProps.width,
+	    _moreProps$chartConfi = moreProps.chartConfig,
+	    height = _moreProps$chartConfi.height,
+	    width = _moreProps$chartConfi.width,
 	    mouseInsideCanvas = moreProps.show;
 
 

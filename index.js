@@ -1,7 +1,5 @@
 "use strict";
 
-// common components
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -62,7 +60,7 @@ Object.defineProperty(exports, "ZoomButtons", {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = exports.version = "0.7.0";
+var version = exports.version = "0.7.4";
 
 /*
 // chart types & Series

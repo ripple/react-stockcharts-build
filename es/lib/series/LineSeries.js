@@ -1,5 +1,3 @@
-"use strict";
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -19,7 +17,7 @@ import { line as d3Line } from "d3-shape";
 import GenericChartComponent from "../GenericChartComponent";
 import { getAxisCanvas, getMouseCanvas } from "../GenericComponent";
 
-import { isDefined, getClosestItemIndexes, strokeDashTypes, getStrokeDasharray } from "../utils";
+import { isDefined, getClosestItemIndexes, strokeDashTypes, getStrokeDasharray, hexToRGBA } from "../utils";
 
 var LineSeries = function (_Component) {
 	_inherits(LineSeries, _Component);
@@ -98,13 +96,15 @@ var LineSeries = function (_Component) {
 			var _props2 = this.props,
 			    yAccessor = _props2.yAccessor,
 			    stroke = _props2.stroke,
+			    strokeOpacity = _props2.strokeOpacity,
 			    strokeWidth = _props2.strokeWidth,
 			    hoverStrokeWidth = _props2.hoverStrokeWidth,
+			    lineCap = _props2.lineCap,
+			    lineJoin = _props2.lineJoin,
 			    defined = _props2.defined,
 			    strokeDasharray = _props2.strokeDasharray,
 			    interpolation = _props2.interpolation,
-			    lineCap = _props2.lineCap,
-			    lineJoin = _props2.lineJoin;
+			    canvasClip = _props2.canvasClip;
 			var connectNulls = this.props.connectNulls;
 			var xAccessor = moreProps.xAccessor;
 			var xScale = moreProps.xScale,
@@ -113,16 +113,21 @@ var LineSeries = function (_Component) {
 			    hovering = moreProps.hovering;
 
 
+			if (canvasClip) {
+				ctx.save();
+				canvasClip(ctx, moreProps);
+			}
+
 			ctx.lineWidth = hovering ? hoverStrokeWidth : strokeWidth;
 			ctx.lineCap = lineCap;
 			ctx.lineJoin = lineJoin;
-			ctx.strokeStyle = stroke;
+			ctx.strokeStyle = hexToRGBA(stroke, strokeOpacity);
 			ctx.setLineDash(getStrokeDasharray(strokeDasharray).split(","));
 
 			var dataSeries = d3Line().x(function (d) {
-				return xScale(xAccessor(d));
+				return Math.round(xScale(xAccessor(d)));
 			}).y(function (d) {
-				return yScale(yAccessor(d));
+				return Math.round(yScale(yAccessor(d)));
 			});
 
 			if (isDefined(interpolation)) {
@@ -137,19 +142,10 @@ var LineSeries = function (_Component) {
 			ctx.beginPath();
 			dataSeries.context(ctx)(plotData);
 			ctx.stroke();
-			/*
-   let points = [];
-   for (let i = 0; i < plotData.length; i++) {
-   	const d = plotData[i];
-   	if (defined(yAccessor(d), i)) {
-   		const [x, y] = [xScale(xAccessor(d)), yScale(yAccessor(d))];
-   			points.push([x, y]);
-   	} else if (points.length) {
-   		segment(points, ctx);
-   		points = connectNulls ? points : [];
-   	}
-   }
-   	if (points.length) segment(points, ctx);*/
+
+			if (canvasClip) {
+				ctx.restore();
+			}
 		}
 	}, {
 		key: "renderSVG",
@@ -157,6 +153,7 @@ var LineSeries = function (_Component) {
 			var _props3 = this.props,
 			    yAccessor = _props3.yAccessor,
 			    stroke = _props3.stroke,
+			    strokeOpacity = _props3.strokeOpacity,
 			    strokeWidth = _props3.strokeWidth,
 			    hoverStrokeWidth = _props3.hoverStrokeWidth,
 			    lineCap = _props3.lineCap,
@@ -164,18 +161,20 @@ var LineSeries = function (_Component) {
 			    defined = _props3.defined,
 			    strokeDasharray = _props3.strokeDasharray;
 			var connectNulls = this.props.connectNulls;
-			var interpolation = this.props.interpolation;
-			var xAccessor = moreProps.xAccessor;
+			var _props4 = this.props,
+			    interpolation = _props4.interpolation,
+			    style = _props4.style;
+			var xAccessor = moreProps.xAccessor,
+			    chartConfig = moreProps.chartConfig;
 			var xScale = moreProps.xScale,
-			    yScale = moreProps.chartConfig.yScale,
 			    plotData = moreProps.plotData,
 			    hovering = moreProps.hovering;
-
+			var yScale = chartConfig.yScale;
 
 			var dataSeries = d3Line().x(function (d) {
-				return xScale(xAccessor(d));
+				return Math.round(xScale(xAccessor(d)));
 			}).y(function (d) {
-				return yScale(yAccessor(d));
+				return Math.round(yScale(yAccessor(d)));
 			});
 
 			if (isDefined(interpolation)) {
@@ -188,14 +187,17 @@ var LineSeries = function (_Component) {
 			}
 			var d = dataSeries(plotData);
 
-			var _props4 = this.props,
-			    fill = _props4.fill,
-			    className = _props4.className;
+			var _props5 = this.props,
+			    fill = _props5.fill,
+			    className = _props5.className;
 
 
-			return React.createElement("path", { className: className + " " + (stroke ? "" : " line-stroke"),
+			return React.createElement("path", {
+				style: style,
+				className: className + " " + (stroke ? "" : " line-stroke"),
 				d: d,
 				stroke: stroke,
+				strokeOpacity: strokeOpacity,
 				strokeWidth: hovering ? hoverStrokeWidth : strokeWidth,
 				strokeDasharray: getStrokeDasharray(strokeDasharray),
 				strokeLinecap: lineCap,
@@ -250,6 +252,7 @@ function segment(points, ctx) {
 LineSeries.propTypes = {
 	className: PropTypes.string,
 	strokeWidth: PropTypes.number,
+	strokeOpacity: PropTypes.number,
 	stroke: PropTypes.string,
 	hoverStrokeWidth: PropTypes.number,
 	lineCap: PropTypes.string,
@@ -264,12 +267,15 @@ LineSeries.propTypes = {
 	onContextMenu: PropTypes.func,
 	yAccessor: PropTypes.func,
 	connectNulls: PropTypes.bool,
-	interpolation: PropTypes.func
+	interpolation: PropTypes.func,
+	canvasClip: PropTypes.func,
+	style: PropTypes.object
 };
 
 LineSeries.defaultProps = {
 	className: "line ",
 	strokeWidth: 1,
+	strokeOpacity: 1,
 	hoverStrokeWidth: 4,
 	lineCap: "round",
 	lineJoin: "round",
