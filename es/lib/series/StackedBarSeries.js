@@ -20,21 +20,19 @@ import { getAxisCanvas } from "../GenericComponent";
 
 import { identity, hexToRGBA, head, functor, plotDataLengthBarWidth } from "../utils";
 
-function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+function roundRect(ctx, x, y, width, height, r, fill, stroke) {
+	var radiusPx = Math.min(height / 2, r || 0);
+
 	if (typeof stroke == 'undefined') {
 		stroke = true;
 	}
-	if (typeof radius === 'undefined') {
-		radius = 5;
+
+	if (typeof fill == 'undefined') {
+		fill = true;
 	}
-	if (typeof radius === 'number') {
-		radius = { tl: radius, tr: radius, br: radius, bl: radius };
-	} else {
-		var defaultRadius = { tl: 0, tr: 0, br: 0, bl: 0 };
-		for (var side in defaultRadius) {
-			radius[side] = radius[side] || defaultRadius[side];
-		}
-	}
+
+	var radius = { tl: radiusPx, tr: radiusPx, br: radiusPx, bl: radiusPx };
+
 	ctx.beginPath();
 	ctx.moveTo(x + radius.tl, y);
 	ctx.lineTo(x + width - radius.tr, y);
