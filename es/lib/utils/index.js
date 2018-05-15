@@ -152,6 +152,11 @@ export function getClosestItemIndexes(array, value, accessor, log) {
 			hi = mid;
 		}
 	}
+
+	if (lo < 0 || !array[0]) {
+		return { left: 0, right: 0 };
+	}
+
 	// for Date object === does not work, so using the <= in combination with >=
 	// the same code works for both dates and numbers
 	if (accessor(array[lo]).valueOf() === value.valueOf()) hi = lo;
