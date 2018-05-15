@@ -142,6 +142,10 @@ export function getTouchProps(touch) {
 }
 
 export function getClosestItemIndexes(array, value, accessor, log) {
+	if (!value || !array.length) {
+		return { left: 0, right: 0 };
+	}
+
 	var lo = 0,
 	    hi = array.length - 1;
 	while (hi - lo > 1) {
@@ -151,10 +155,6 @@ export function getClosestItemIndexes(array, value, accessor, log) {
 		} else {
 			hi = mid;
 		}
-	}
-
-	if (lo < 0 || !array[0]) {
-		return { left: 0, right: 0 };
 	}
 
 	// for Date object === does not work, so using the <= in combination with >=
