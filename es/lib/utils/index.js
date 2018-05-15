@@ -64,6 +64,20 @@ export function functor(v) {
 	};
 }
 
+export function createVerticalLinearGradient(stops) {
+	return function (moreProps, ctx) {
+		var height = moreProps.chartConfig.height;
+
+
+		var grd = ctx.createLinearGradient(0, height, 0, 0);
+		stops.forEach(function (each) {
+			grd.addColorStop(each.stop, each.color);
+		});
+
+		return grd;
+	};
+}
+
 export function getClosestItemIndexes2(array, value, accessor) {
 	var left = bisector(accessor).left(array, value);
 	left = Math.max(left - 1, 0);
@@ -138,11 +152,6 @@ export function getClosestItemIndexes(array, value, accessor, log) {
 			hi = mid;
 		}
 	}
-
-	if (!array.length) {
-		return { left: 0, right: 0 };
-	}
-
 	// for Date object === does not work, so using the <= in combination with >=
 	// the same code works for both dates and numbers
 	if (accessor(array[lo]).valueOf() === value.valueOf()) hi = lo;

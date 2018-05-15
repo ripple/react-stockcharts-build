@@ -106,8 +106,15 @@ var GenericComponent = function (_Component) {
 					// DO NOT DRAW FOR THESE EVENTS
 					break;
 				case "mouseleave":
+					{
+						this.moreProps.hovering = false;
+						var moreProps = this.getMoreProps();
 
-					break;
+						if (this.props.onUnHover) {
+							this.props.onUnHover(moreProps, e);
+						}
+						break;
+					}
 				case "contextmenu":
 					{
 						if (this.props.onContextMenu) {
@@ -127,15 +134,15 @@ var GenericComponent = function (_Component) {
 					}
 				case "click":
 					{
-						var moreProps = this.getMoreProps();
+						var _moreProps = this.getMoreProps();
 						if (this.moreProps.hovering) {
 							// console.error("TODO use this only for SAR, Line series")
-							this.props.onClickWhenHover(moreProps, e);
+							this.props.onClickWhenHover(_moreProps, e);
 						} else {
-							this.props.onClickOutside(moreProps, e);
+							this.props.onClickOutside(_moreProps, e);
 						}
 						if (this.props.onClick) {
-							this.props.onClick(moreProps, e);
+							this.props.onClick(_moreProps, e);
 						}
 						break;
 					}
@@ -150,7 +157,9 @@ var GenericComponent = function (_Component) {
 						    setCursorClass = _context.setCursorClass;
 
 
-						if (this.moreProps.hovering && !this.props.selected && !prevHover && isDefined(this.props.onHover)) {
+						if (this.moreProps.hovering && !this.props.selected
+						/* && !prevHover */
+						&& amIOnTop(this.suscriberId) && isDefined(this.props.onHover)) {
 							setCursorClass("react-stockcharts-pointer-cursor");
 							this.iSetTheCursorClass = true;
 						} else if (this.moreProps.hovering && this.props.selected && amIOnTop(this.suscriberId)) {
@@ -160,33 +169,33 @@ var GenericComponent = function (_Component) {
 							this.iSetTheCursorClass = false;
 							setCursorClass(null);
 						}
-						var _moreProps = this.getMoreProps();
+						var _moreProps2 = this.getMoreProps();
 
 						if (this.moreProps.hovering && !prevHover) {
 							if (this.props.onHover) {
-								this.props.onHover(_moreProps, e);
+								this.props.onHover(_moreProps2, e);
 							}
 						}
 						if (prevHover && !this.moreProps.hovering) {
 							if (this.props.onUnHover) {
-								this.props.onUnHover(_moreProps, e);
+								this.props.onUnHover(_moreProps2, e);
 							}
 						}
 
 						if (this.props.onMouseMove) {
-							this.props.onMouseMove(_moreProps, e);
+							this.props.onMouseMove(_moreProps2, e);
 						}
 						break;
 					}
 				case "dblclick":
 					{
-						var _moreProps2 = this.getMoreProps();
+						var _moreProps3 = this.getMoreProps();
 
 						if (this.props.onDoubleClick) {
-							this.props.onDoubleClick(_moreProps2, e);
+							this.props.onDoubleClick(_moreProps3, e);
 						}
 						if (this.moreProps.hovering && this.props.onDoubleClickWhenHover) {
-							this.props.onDoubleClickWhenHover(_moreProps2, e);
+							this.props.onDoubleClickWhenHover(_moreProps3, e);
 						}
 						break;
 					}

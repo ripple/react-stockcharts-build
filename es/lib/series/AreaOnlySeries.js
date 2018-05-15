@@ -34,7 +34,8 @@ var AreaOnlySeries = function (_Component) {
 			var _props = this.props,
 			    yAccessor = _props.yAccessor,
 			    defined = _props.defined,
-			    base = _props.base;
+			    base = _props.base,
+			    canvasGradient = _props.canvasGradient;
 			var _props2 = this.props,
 			    fill = _props2.fill,
 			    stroke = _props2.stroke,
@@ -52,7 +53,11 @@ var AreaOnlySeries = function (_Component) {
 				canvasClip(ctx, moreProps);
 			}
 
-			ctx.fillStyle = hexToRGBA(fill, opacity);
+			if (canvasGradient != null) {
+				ctx.fillStyle = canvasGradient(moreProps, ctx);
+			} else {
+				ctx.fillStyle = hexToRGBA(fill, opacity);
+			}
 			ctx.strokeStyle = stroke;
 
 			ctx.beginPath();
@@ -118,9 +123,9 @@ var AreaOnlySeries = function (_Component) {
 				style: style,
 				d: d,
 				stroke: stroke,
-				fill: fill,
-				className: newClassName,
-				fillOpacity: opacity
+				fill: hexToRGBA(fill, opacity),
+				className: newClassName
+
 			});
 		}
 	}, {
@@ -148,7 +153,8 @@ AreaOnlySeries.propTypes = {
 	base: PropTypes.oneOfType([PropTypes.func, PropTypes.number]),
 	interpolation: PropTypes.func,
 	canvasClip: PropTypes.func,
-	style: PropTypes.object
+	style: PropTypes.object,
+	canvasGradient: PropTypes.func
 };
 
 AreaOnlySeries.defaultProps = {

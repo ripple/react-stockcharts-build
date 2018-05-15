@@ -60,7 +60,9 @@ var MACDSeries = function (_Component) {
 			var _props = this.props,
 			    className = _props.className,
 			    opacity = _props.opacity,
-			    divergenceStroke = _props.divergenceStroke;
+			    divergenceStroke = _props.divergenceStroke,
+			    widthRatio = _props.widthRatio,
+			    width = _props.width;
 			var _props2 = this.props,
 			    stroke = _props2.stroke,
 			    fill = _props2.fill;
@@ -76,7 +78,8 @@ var MACDSeries = function (_Component) {
 				React.createElement(BarSeries, {
 					baseAt: this.yAccessorForDivergenceBase,
 					className: "macd-divergence",
-					widthRatio: 0.5,
+					width: width,
+					widthRatio: widthRatio,
 					stroke: divergenceStroke,
 					fill: fill.divergence,
 					opacity: opacity,
@@ -114,8 +117,10 @@ MACDSeries.propTypes = {
 		signal: PropTypes.string.isRequired
 	}).isRequired,
 	fill: PropTypes.shape({
-		divergence: PropTypes.string.isRequired
-	}).isRequired
+		divergence: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired
+	}).isRequired,
+	widthRatio: PropTypes.number,
+	width: BarSeries.propTypes.width
 };
 
 MACDSeries.defaultProps = {
@@ -124,7 +129,9 @@ MACDSeries.defaultProps = {
 	zeroLineOpacity: 0.3,
 	opacity: 0.6,
 	divergenceStroke: false,
-	clip: true
+	clip: true,
+	widthRatio: 0.5,
+	width: BarSeries.defaultProps.width
 };
 
 export default MACDSeries;

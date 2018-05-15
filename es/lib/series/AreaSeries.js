@@ -15,6 +15,7 @@ function AreaSeries(props) {
 	    strokeWidth = props.strokeWidth,
 	    strokeOpacity = props.strokeOpacity,
 	    strokeDasharray = props.strokeDasharray,
+	    canvasGradient = props.canvasGradient,
 	    lineCap = props.lineCap,
 	    lineJoin = props.lineJoin,
 	    fill = props.fill,
@@ -30,6 +31,7 @@ function AreaSeries(props) {
 			yAccessor: yAccessor,
 			interpolation: interpolation,
 			base: baseAt,
+			canvasGradient: canvasGradient,
 			fill: fill,
 			opacity: opacity,
 			style: style,
@@ -56,6 +58,7 @@ function AreaSeries(props) {
 AreaSeries.propTypes = {
 	stroke: PropTypes.string,
 	strokeWidth: PropTypes.number,
+	canvasGradient: PropTypes.func,
 	fill: PropTypes.string.isRequired,
 	strokeOpacity: PropTypes.number.isRequired,
 	opacity: PropTypes.number.isRequired,

@@ -19,15 +19,18 @@ export function plotDataLengthBarWidth(props, moreProps) {
 	    r = _xScale$range2[1];
 
 	var totalWidth = Math.abs(r - l);
+	if (xScale.invert != null) {
+		var _xScale$domain = xScale.domain(),
+		    _xScale$domain2 = _slicedToArray(_xScale$domain, 2),
+		    dl = _xScale$domain2[0],
+		    dr = _xScale$domain2[1];
 
-	var _xScale$domain = xScale.domain(),
-	    _xScale$domain2 = _slicedToArray(_xScale$domain, 2),
-	    dl = _xScale$domain2[0],
-	    dr = _xScale$domain2[1];
-
-	var width = totalWidth / Math.abs(dl - dr);
-
-	return width * widthRatio;
+		var width = totalWidth / Math.abs(dl - dr);
+		return width * widthRatio;
+	} else {
+		var _width = totalWidth / xScale.domain().length;
+		return _width * widthRatio;
+	}
 }
 
 /**

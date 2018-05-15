@@ -443,7 +443,9 @@ var ChartCanvas = function (_Component) {
 	}, {
 		key: "setCursorClass",
 		value: function setCursorClass(className) {
-			this.eventCaptureNode.setCursorClass(className);
+			if (this.eventCaptureNode != null) {
+				this.eventCaptureNode.setCursorClass(className);
+			}
 		}
 	}, {
 		key: "amIOnTop",

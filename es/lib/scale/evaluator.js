@@ -128,6 +128,10 @@ function showMax(width, threshold) {
 }
 
 function getFilteredResponse(data, left, right, xAccessor) {
+	if (data.length === 0) {
+		return [];
+	}
+
 	var newLeftIndex = getClosestItemIndexes(data, left, xAccessor).right;
 	var newRightIndex = getClosestItemIndexes(data, right, xAccessor).left;
 

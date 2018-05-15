@@ -113,17 +113,29 @@ MouseCoordinateY.defaultProps = {
 };
 
 function helper(props, moreProps) {
-	var chartId = moreProps.chartId,
-	    width = moreProps.width;
-	var show = moreProps.show,
-	    currentCharts = moreProps.currentCharts,
+	var chartId = moreProps.chartId;
+	var currentCharts = moreProps.currentCharts,
 	    mouseXY = moreProps.mouseXY;
 
 
 	if (isNotDefined(mouseXY)) return null;
-
 	if (currentCharts.indexOf(chartId) < 0) return null;
 
+	var show = moreProps.show;
+
+	if (!show) return null;
+
+	var customY = props.customY;
+
+	var _customY = customY(props, moreProps),
+	    y = _customY.y,
+	    coordinate = _customY.coordinate;
+
+	return getYCoordinate(y, coordinate, props, moreProps);
+}
+
+export function getYCoordinate(y, displayValue, props, moreProps) {
+	var width = moreProps.width;
 	var orient = props.orient,
 	    at = props.at,
 	    rectWidth = props.rectWidth,
@@ -138,11 +150,7 @@ function helper(props, moreProps) {
 	var stroke = props.stroke,
 	    strokeOpacity = props.strokeOpacity,
 	    strokeWidth = props.strokeWidth;
-	var customY = props.customY;
 
-	var _customY = customY(props, moreProps),
-	    y = _customY.y,
-	    coordinate = _customY.coordinate;
 
 	var x1 = 0,
 	    x2 = width;
@@ -152,16 +160,26 @@ function helper(props, moreProps) {
 	var hideLine = true;
 
 	var coordinateProps = {
-		coordinate: coordinate,
-		show: show,
+		coordinate: displayValue,
+		show: true,
 		type: type,
 		orient: orient,
 		edgeAt: edgeAt,
 		hideLine: hideLine,
-		fill: fill, opacity: opacity, fontFamily: fontFamily, fontSize: fontSize, textFill: textFill,
-		stroke: stroke, strokeOpacity: strokeOpacity, strokeWidth: strokeWidth,
+		fill: fill,
+		opacity: opacity,
+
+		fontFamily: fontFamily,
+		fontSize: fontSize,
+		textFill: textFill,
+
+		stroke: stroke,
+		strokeOpacity: strokeOpacity,
+		strokeWidth: strokeWidth,
+
 		rectWidth: rectWidth,
 		rectHeight: rectHeight,
+
 		arrowWidth: arrowWidth,
 		dx: dx,
 		x1: x1,

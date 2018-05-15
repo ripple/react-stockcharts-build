@@ -68,6 +68,7 @@ EdgeIndicator.propTypes = {
 	type: PropTypes.oneOf(["horizontal"]),
 	className: PropTypes.string,
 	fill: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+	lineStroke: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 	textFill: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 	itemType: PropTypes.oneOf(["first", "last"]).isRequired,
 	orient: PropTypes.oneOf(["left", "right"]),
@@ -125,7 +126,8 @@ function getEdge(props, moreProps, item) {
 	    displayFormat = props.displayFormat,
 	    edgeAt = props.edgeAt,
 	    yAxisPad = props.yAxisPad,
-	    orient = props.orient;
+	    orient = props.orient,
+	    lineStroke = props.lineStroke;
 	var yAccessor = props.yAccessor,
 	    fill = props.fill,
 	    textFill = props.textFill,
@@ -160,6 +162,7 @@ function getEdge(props, moreProps, item) {
 		orient: orient,
 		edgeAt: edgeX,
 		fill: functor(fill)(item),
+		lineStroke: functor(lineStroke)(item),
 		stroke: functor(stroke)(item),
 		fontFamily: fontFamily, fontSize: fontSize,
 		textFill: functor(textFill)(item),

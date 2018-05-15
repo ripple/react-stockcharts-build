@@ -32,7 +32,6 @@ var BarSeries = function (_Component) {
 	_createClass(BarSeries, [{
 		key: "drawOnCanvas",
 		value: function drawOnCanvas(ctx, moreProps) {
-
 			if (this.props.swapScales) {
 				var xAccessor = moreProps.xAccessor;
 
