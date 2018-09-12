@@ -190,6 +190,8 @@ var TrendLine = function (_Component) {
 				trends.map(function (each, idx) {
 					var eachAppearance = isDefined(each.appearance) ? _extends({}, appearance, each.appearance) : appearance;
 
+					var hoverTextWithDefault = _extends({}, TrendLine.defaultProps.hoverText, hoverText);
+
 					return React.createElement(EachTrendLine, { key: idx,
 						ref: _this5.saveNodeType(idx),
 						index: idx,
@@ -207,7 +209,7 @@ var TrendLine = function (_Component) {
 						edgeFill: eachAppearance.edgeFill,
 						edgeStrokeWidth: eachAppearance.edgeStrokeWidth,
 						r: eachAppearance.r,
-						hoverText: hoverText,
+						hoverText: hoverTextWithDefault,
 						onDrag: _this5.handleDragLine,
 						onDragComplete: _this5.handleDragLineComplete,
 						edgeInteractiveCursor: "react-stockcharts-move-cursor",
@@ -285,9 +287,10 @@ TrendLine.defaultProps = {
 	},
 	hoverText: _extends({}, HoverTextNearMouse.defaultProps, {
 		enable: true,
-		bgHeight: 18,
-		bgWidth: 120,
-		text: "Click to select object"
+		bgHeight: "auto",
+		bgWidth: "auto",
+		text: "Click to select object",
+		selectedText: ""
 	}),
 	trends: [],
 

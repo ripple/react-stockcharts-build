@@ -60,7 +60,7 @@ Object.defineProperty(exports, "ZoomButtons", {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = exports.version = "0.7.6";
+var version = exports.version = "0.7.8";
 
 /*
 // chart types & Series

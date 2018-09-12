@@ -14,10 +14,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 import GenericChartComponent from "../../GenericChartComponent";
-import { getMouseCanvas } from "../../GenericComponent";
-import { isDefined, hexToRGBA } from "../../utils";
+import { isDefined } from "../../utils";
 
 var PADDING = 10;
+var MIN_WIDTH = PADDING;
 
 var HoverTextNearMouse = function (_Component) {
 	_inherits(HoverTextNearMouse, _Component);
@@ -27,42 +27,83 @@ var HoverTextNearMouse = function (_Component) {
 
 		var _this = _possibleConstructorReturn(this, (HoverTextNearMouse.__proto__ || Object.getPrototypeOf(HoverTextNearMouse)).call(this, props));
 
+		_this.state = {
+			textWidth: undefined,
+			textHeight: undefined
+		};
+
+		_this.saveNode = _this.saveNode.bind(_this);
+		_this.updateTextSize = _this.updateTextSize.bind(_this);
 		_this.renderSVG = _this.renderSVG.bind(_this);
-		_this.drawOnCanvas = _this.drawOnCanvas.bind(_this);
 		return _this;
 	}
 
 	_createClass(HoverTextNearMouse, [{
-		key: "drawOnCanvas",
-		value: function drawOnCanvas(ctx, moreProps) {
+		key: "saveNode",
+		value: function saveNode(node) {
+			this.textNode = node;
+		}
+	}, {
+		key: "updateTextSize",
+		value: function updateTextSize() {
 			var _props = this.props,
-			    fontFamily = _props.fontFamily,
-			    fontSize = _props.fontSize,
-			    fill = _props.fill,
-			    bgFill = _props.bgFill,
-			    bgOpacity = _props.bgOpacity;
+			    bgWidth = _props.bgWidth,
+			    bgHeight = _props.bgHeight;
 
-			// console.log(moreProps)
+			if (bgWidth === "auto" || bgHeight === "auto") {
+				var textNode = this.textNode;
+				if (textNode) {
+					var _textNode$getBBox = textNode.getBBox(),
+					    width = _textNode$getBBox.width,
+					    height = _textNode$getBBox.height;
 
-			var textMetaData = helper(this.props, moreProps);
+					if (this.state.textWidth !== width || this.state.textHeight !== height) {
+						this.setState({
+							textWidth: width,
+							textHeight: height
+						});
+					}
+				}
+			}
+		}
+	}, {
+		key: "componentDidMount",
+		value: function componentDidMount() {
+			this.updateTextSize();
+		}
+	}, {
+		key: "componentDidUpdate",
+		value: function componentDidUpdate() {
+			this.updateTextSize();
+		}
+	}, {
+		key: "getBgWidth",
+		value: function getBgWidth() {
+			var bgWidth = this.props.bgWidth;
+			var textWidth = this.state.textWidth;
 
-			if (isDefined(textMetaData)) {
-				var rect = textMetaData.rect,
-				    text = textMetaData.text;
+
+			if (bgWidth !== "auto") {
+				return bgWidth;
+			} else if (textWidth !== undefined) {
+				return textWidth + PADDING;
+			} else {
+				return MIN_WIDTH;
+			}
+		}
+	}, {
+		key: "getBgHeight",
+		value: function getBgHeight() {
+			var bgHeight = this.props.bgHeight;
+			var textHeight = this.state.textHeight;
 
 
-				ctx.strokeStyle = bgFill;
-				ctx.fillStyle = hexToRGBA(bgFill, bgOpacity);
-				ctx.beginPath();
-				ctx.rect(rect.x, rect.y, rect.width, rect.height);
-				ctx.fill();
-				ctx.stroke();
-
-				ctx.font = fontSize + "px " + fontFamily;
-				ctx.fillStyle = fill;
-				ctx.beginPath();
-
-				ctx.fillText(text.text, text.x, text.y);
+			if (bgHeight !== "auto") {
+				return bgHeight;
+			} else if (textHeight !== undefined) {
+				return textHeight + PADDING;
+			} else {
+				return MIN_WIDTH;
 			}
 		}
 	}, {
@@ -77,12 +118,14 @@ var HoverTextNearMouse = function (_Component) {
 
 			// console.log(moreProps)
 
-			var textMetaData = helper(this.props, moreProps);
+			var textMetaData = helper(_extends({}, this.props, {
+				bgWidth: this.getBgWidth(),
+				bgHeight: this.getBgHeight()
+			}), moreProps);
 
 			if (isDefined(textMetaData)) {
 				var rect = textMetaData.rect,
 				    text = textMetaData.text;
-
 
 				return React.createElement(
 					"g",
@@ -95,9 +138,11 @@ var HoverTextNearMouse = function (_Component) {
 					React.createElement(
 						"text",
 						{
+							ref: this.saveNode,
 							fontSize: fontSize,
 							fontFamily: fontFamily,
 							textAnchor: "start",
+							alignmentBaseline: "central",
 							fill: fill,
 							x: text.x,
 							y: text.y },
@@ -109,21 +154,23 @@ var HoverTextNearMouse = function (_Component) {
 	}, {
 		key: "render",
 		value: function render() {
+			var text = this.props.text;
 
-			return React.createElement(GenericChartComponent, { foo: true,
-
-				svgDraw: this.renderSVG,
-
-				canvasToDraw: getMouseCanvas,
-				canvasDraw: this.drawOnCanvas,
-
-				drawOn: ["mousemove"]
-			});
+			if (text) {
+				return React.createElement(GenericChartComponent, {
+					svgDraw: this.renderSVG,
+					drawOn: ["mousemove"]
+				});
+			} else {
+				return null;
+			}
 		}
 	}]);
 
 	return HoverTextNearMouse;
 }(Component);
+
+var numberOrString = PropTypes.oneOfType([PropTypes.number, PropTypes.oneOf(["auto"])]);
 
 HoverTextNearMouse.propTypes = {
 	fontFamily: PropTypes.string.isRequired,
@@ -132,8 +179,8 @@ HoverTextNearMouse.propTypes = {
 	text: PropTypes.string.isRequired,
 	bgFill: PropTypes.string.isRequired,
 	bgOpacity: PropTypes.number.isRequired,
-	bgWidth: PropTypes.number.isRequired,
-	bgHeight: PropTypes.number.isRequired,
+	bgWidth: numberOrString.isRequired,
+	bgHeight: numberOrString.isRequired,
 	show: PropTypes.bool.isRequired
 };
 
@@ -147,7 +194,6 @@ HoverTextNearMouse.defaultProps = {
 
 function helper(props, moreProps) {
 	var show = props.show,
-	    fontSize = props.fontSize,
 	    bgWidth = props.bgWidth,
 	    bgHeight = props.bgHeight;
 	var mouseXY = moreProps.mouseXY,
@@ -163,6 +209,7 @@ function helper(props, moreProps) {
 		    y = _mouseXY[1];
 
 		var cx = x < width / 2 ? x + PADDING : x - bgWidth - PADDING;
+
 		var cy = y < height / 2 ? y + PADDING : y - bgHeight - PADDING;
 
 		var rect = {
@@ -171,10 +218,11 @@ function helper(props, moreProps) {
 			width: bgWidth,
 			height: bgHeight
 		};
+
 		var text = {
 			text: props.text,
 			x: cx + PADDING / 2,
-			y: cy + fontSize
+			y: cy + bgHeight / 2
 		};
 
 		return {

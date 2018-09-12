@@ -202,12 +202,13 @@ var FibonacciRetracement = function (_Component) {
 			    hoverText = _props4.hoverText;
 
 			var overrideIndex = isDefined(override) ? override.index : null;
+			var hoverTextWidthDefault = _extends({}, FibonacciRetracement.defaultProps.hoverText, hoverText);
 
 			var currentRetracement = isDefined(current) && isDefined(current.x2) ? React.createElement(EachFibRetracement, _extends({
 				interactive: false,
 				type: type,
 				appearance: appearance,
-				hoverText: hoverText
+				hoverText: hoverTextWidthDefault
 			}, current)) : null;
 			return React.createElement(
 				"g",
@@ -215,14 +216,16 @@ var FibonacciRetracement = function (_Component) {
 				retracements.map(function (each, idx) {
 					var eachAppearance = isDefined(each.appearance) ? _extends({}, appearance, each.appearance) : appearance;
 
+					var eachHoverText = isDefined(each.hoverText) ? _extends({}, hoverTextWidthDefault, each.hoverText) : hoverTextWidthDefault;
+
 					return React.createElement(EachFibRetracement, _extends({
 						key: idx,
 						ref: _this5.saveNodeType(idx),
 						index: idx,
 						type: each.type,
-						selected: each.selected,
-						hoverText: hoverText
+						selected: each.selected
 					}, idx === overrideIndex ? override : each, {
+						hoverText: eachHoverText,
 						appearance: eachAppearance,
 						onDrag: _this5.handleDrag,
 						onDragComplete: _this5.handleDragComplete
@@ -296,9 +299,10 @@ FibonacciRetracement.defaultProps = {
 
 	hoverText: _extends({}, HoverTextNearMouse.defaultProps, {
 		enable: true,
-		bgHeight: 18,
-		bgWidth: 120,
-		text: "Click to select object"
+		bgHeight: "auto",
+		bgWidth: "auto",
+		text: "Click to select object",
+		selectedText: ""
 	}),
 	currentPositionStroke: "#000000",
 	currentPositionOpacity: 1,

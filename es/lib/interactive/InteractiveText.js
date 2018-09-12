@@ -127,14 +127,18 @@ var InteractiveText = function (_Component) {
 
 			var _props2 = this.props,
 			    textList = _props2.textList,
-			    defaultText = _props2.defaultText;
+			    defaultText = _props2.defaultText,
+			    hoverText = _props2.hoverText;
 			var override = this.state.override;
 
 			return React.createElement(
 				"g",
 				null,
 				textList.map(function (each, idx) {
-					var props = _extends({}, defaultText, each);
+					var defaultHoverText = InteractiveText.defaultProps.hoverText;
+					var props = _extends({}, defaultText, each, {
+						hoverText: _extends({}, defaultHoverText, hoverText, each.hoverText || {})
+					});
 					return React.createElement(EachText, _extends({ key: idx,
 						ref: _this3.saveNodeType(idx),
 						index: idx
@@ -173,6 +177,8 @@ InteractiveText.propTypes = {
 	defaultText: PropTypes.shape({
 		bgFill: PropTypes.string.isRequired,
 		bgOpacity: PropTypes.number.isRequired,
+		bgStrokeWidth: PropTypes.number,
+		bgStroke: PropTypes.string,
 		textFill: PropTypes.string.isRequired,
 		fontFamily: PropTypes.string.isRequired,
 		fontWeight: PropTypes.string.isRequired,
@@ -194,6 +200,7 @@ InteractiveText.defaultProps = {
 	defaultText: {
 		bgFill: "#D3D3D3",
 		bgOpacity: 1,
+		bgStrokeWidth: 1,
 		textFill: "#F10040",
 		fontFamily: "Helvetica Neue, Helvetica, Arial, sans-serif",
 		fontSize: 12,
@@ -203,9 +210,10 @@ InteractiveText.defaultProps = {
 	},
 	hoverText: _extends({}, HoverTextNearMouse.defaultProps, {
 		enable: true,
-		bgHeight: 18,
-		bgWidth: 175,
-		text: "Click and drag the edge circles"
+		bgHeight: "auto",
+		bgWidth: "auto",
+		text: "Click to select object",
+		selectedText: ""
 	}),
 	textList: []
 };

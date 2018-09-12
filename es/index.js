@@ -8,7 +8,7 @@ export { default as GenericComponent } from "./lib/GenericComponent";
 export { default as BackgroundText } from "./lib/BackgroundText";
 export { default as ZoomButtons } from "./lib/ZoomButtons";
 
-export var version = "0.7.6";
+export var version = "0.7.8";
 
 /*
 // chart types & Series

@@ -63,6 +63,8 @@ var InteractiveText = function (_Component) {
 			var _props = this.props,
 			    bgFill = _props.bgFill,
 			    bgOpacity = _props.bgOpacity,
+			    bgStrokeWidth = _props.bgStrokeWidth,
+			    bgStroke = _props.bgStroke,
 			    textFill = _props.textFill,
 			    fontFamily = _props.fontFamily,
 			    fontSize = _props.fontSize,
@@ -94,7 +96,8 @@ var InteractiveText = function (_Component) {
 			ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 
 			if (selected) {
-				ctx.strokeStyle = textFill;
+				ctx.strokeStyle = bgStroke;
+				ctx.lineWidth = bgStrokeWidth;
 				ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 			}
 
@@ -178,6 +181,8 @@ function helper(props, moreProps, textWidth) {
 InteractiveText.propTypes = {
 	bgFill: PropTypes.string.isRequired,
 	bgOpacity: PropTypes.number.isRequired,
+	bgStrokeWidth: PropTypes.number.isRequired,
+	bgStroke: PropTypes.string.isRequired,
 
 	textFill: PropTypes.string.isRequired,
 	fontFamily: PropTypes.string.isRequired,
@@ -208,7 +213,6 @@ InteractiveText.defaultProps = {
 	type: "SD", // standard dev
 	fontWeight: "normal", // standard dev
 
-	strokeWidth: 1,
 	tolerance: 4,
 	selected: false
 };

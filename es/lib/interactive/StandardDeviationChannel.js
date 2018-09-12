@@ -86,7 +86,6 @@ var StandardDeviationChannel = function (_Component) {
 
 			if (isDefined(current) && isDefined(current.start)) {
 				this.mouseMoved = true;
-				console.log(xyValue);
 				this.setState({
 					current: {
 						start: current.start,
@@ -167,19 +166,25 @@ var StandardDeviationChannel = function (_Component) {
 			    override = _state.override;
 
 
+			var eachDefaultAppearance = _extends({}, StandardDeviationChannel.defaultProps.appearance, appearance);
+
+			var hoverTextDefault = _extends({}, StandardDeviationChannel.defaultProps.hoverText, hoverText);
+
 			var tempLine = isDefined(current) && isDefined(current.end) ? React.createElement(EachLinearRegressionChannel, {
 				interactive: false,
 				x1Value: current.start[0],
 				x2Value: current.end[0],
-				appearance: appearance,
-				hoverText: hoverText
+				appearance: eachDefaultAppearance,
+				hoverText: hoverTextDefault
 			}) : null;
 
 			return React.createElement(
 				"g",
 				null,
 				channels.map(function (each, idx) {
-					var eachAppearance = isDefined(each.appearance) ? _extends({}, appearance, each.appearance) : appearance;
+					var eachAppearance = isDefined(each.appearance) ? _extends({}, eachDefaultAppearance, each.appearance) : eachDefaultAppearance;
+
+					var eachHoverText = isDefined(each.hoverText) ? _extends({}, hoverTextDefault, each.hoverText) : hoverTextDefault;
 
 					return React.createElement(EachLinearRegressionChannel, { key: idx,
 						ref: _this5.saveNodeType(idx),
@@ -191,7 +196,7 @@ var StandardDeviationChannel = function (_Component) {
 
 						appearance: eachAppearance,
 						snapTo: snapTo,
-						hoverText: hoverText,
+						hoverText: eachHoverText,
 
 						onDrag: _this5.handleDragLine,
 						onDragComplete: _this5.handleDragLineComplete,
@@ -220,9 +225,9 @@ var StandardDeviationChannel = function (_Component) {
 
 StandardDeviationChannel.propTypes = {
 	enabled: PropTypes.bool.isRequired,
-	snapTo: PropTypes.func.isRequired,
+	snapTo: PropTypes.func,
 
-	onStart: PropTypes.func.isRequired,
+	onStart: PropTypes.func,
 	onComplete: PropTypes.func.isRequired,
 	onSelect: PropTypes.func,
 
@@ -232,18 +237,18 @@ StandardDeviationChannel.propTypes = {
 	currentPositionRadius: PropTypes.number,
 
 	appearance: PropTypes.shape({
-		stroke: PropTypes.string.isRequired,
-		strokeOpacity: PropTypes.number.isRequired,
-		strokeWidth: PropTypes.number.isRequired,
-		fill: PropTypes.string.isRequired,
-		fillOpacity: PropTypes.number.isRequired,
-		edgeStrokeWidth: PropTypes.number.isRequired,
-		edgeStroke: PropTypes.string.isRequired,
-		edgeFill: PropTypes.string.isRequired,
-		r: PropTypes.number.isRequired
+		stroke: PropTypes.string,
+		strokeOpacity: PropTypes.number,
+		strokeWidth: PropTypes.number,
+		fill: PropTypes.string,
+		fillOpacity: PropTypes.number,
+		edgeStrokeWidth: PropTypes.number,
+		edgeStroke: PropTypes.string,
+		edgeFill: PropTypes.string,
+		r: PropTypes.number
 	}).isRequired,
 
-	hoverText: PropTypes.object.isRequired,
+	hoverText: PropTypes.object,
 	channels: PropTypes.array.isRequired
 };
 
@@ -274,9 +279,10 @@ StandardDeviationChannel.defaultProps = {
 
 	hoverText: _extends({}, HoverTextNearMouse.defaultProps, {
 		enable: true,
-		bgHeight: 18,
-		bgWidth: 175,
-		text: "Click and drag the edge circles"
+		bgHeight: "auto",
+		bgWidth: "auto",
+		text: "Click and drag the edge circles",
+		selectedText: ""
 	}),
 	channels: []
 };

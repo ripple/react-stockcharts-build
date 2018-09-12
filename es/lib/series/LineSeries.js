@@ -208,9 +208,12 @@ var LineSeries = function (_Component) {
 	}, {
 		key: "render",
 		value: function render() {
-			var highlightOnHover = this.props.highlightOnHover;
+			var _props6 = this.props,
+			    highlightOnHover = _props6.highlightOnHover,
+			    onHover = _props6.onHover,
+			    onUnHover = _props6.onUnHover;
 
-			var hoverProps = highlightOnHover ? {
+			var hoverProps = highlightOnHover || onHover || onUnHover ? {
 				isHover: this.isHover,
 				drawOn: ["mousemove", "pan"],
 				canvasToDraw: getMouseCanvas
@@ -226,7 +229,9 @@ var LineSeries = function (_Component) {
 
 				onClickWhenHover: this.props.onClick,
 				onDoubleClickWhenHover: this.props.onDoubleClick,
-				onContextMenuWhenHover: this.props.onContextMenu
+				onContextMenuWhenHover: this.props.onContextMenu,
+				onHover: this.props.onHover,
+				onUnHover: this.props.onUnHover
 			}, hoverProps));
 		}
 	}]);
@@ -264,6 +269,8 @@ LineSeries.propTypes = {
 	highlightOnHover: PropTypes.bool,
 	onClick: PropTypes.func,
 	onDoubleClick: PropTypes.func,
+	onHover: PropTypes.func,
+	onUnHover: PropTypes.func,
 	onContextMenu: PropTypes.func,
 	yAccessor: PropTypes.func,
 	connectNulls: PropTypes.bool,

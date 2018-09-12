@@ -176,13 +176,14 @@ var AxisZoomCapture = function (_Component) {
 		value: function render() {
 			var _props4 = this.props,
 			    bg = _props4.bg,
+			    className = _props4.className,
 			    zoomCursorClassName = _props4.zoomCursorClassName;
 
 
 			var cursor = isDefined(this.state.startPosition) ? zoomCursorClassName : "react-stockcharts-default-cursor";
 
 			return React.createElement("rect", {
-				className: "react-stockcharts-enable-interaction " + cursor,
+				className: "react-stockcharts-enable-interaction " + cursor + " " + className,
 				ref: this.saveNode,
 				x: bg.x, y: bg.y, opacity: 0, height: bg.h, width: bg.w,
 				onContextMenu: this.handleRightClick,

@@ -109,6 +109,8 @@ var EachText = function (_Component) {
 			    position = _props2.position,
 			    bgFill = _props2.bgFill,
 			    bgOpacity = _props2.bgOpacity,
+			    bgStroke = _props2.bgStroke,
+			    bgStrokeWidth = _props2.bgStrokeWidth,
 			    textFill = _props2.textFill,
 			    fontFamily = _props2.fontFamily,
 			    fontSize = _props2.fontSize,
@@ -127,7 +129,9 @@ var EachText = function (_Component) {
 			};
 
 			var hoverTextEnabled = hoverText.enable,
-			    restHoverTextProps = _objectWithoutProperties(hoverText, ["enable"]);
+			    hoverTextSelected = hoverText.selectedText,
+			    hoverTextUnselected = hoverText.text,
+			    restHoverTextProps = _objectWithoutProperties(hoverText, ["enable", "selectedText", "text"]);
 
 			return React.createElement(
 				"g",
@@ -141,10 +145,11 @@ var EachText = function (_Component) {
 					onDragStart: this.handleDragStart,
 					onDrag: this.handleDrag,
 					onDragComplete: onDragComplete,
-
 					position: position,
 					bgFill: bgFill,
 					bgOpacity: bgOpacity,
+					bgStroke: bgStroke || textFill,
+					bgStrokeWidth: bgStrokeWidth,
 					textFill: textFill,
 					fontFamily: fontFamily,
 					fontStyle: fontStyle,
@@ -153,8 +158,10 @@ var EachText = function (_Component) {
 					text: text
 				})),
 				React.createElement(HoverTextNearMouse, _extends({
-					show: hoverTextEnabled && hover && !selected
-				}, restHoverTextProps))
+					show: hoverTextEnabled && hover
+				}, restHoverTextProps, {
+					text: selected ? hoverTextSelected : hoverTextUnselected
+				}))
 			);
 		}
 	}]);
@@ -180,6 +187,8 @@ EachText.propTypes = {
 	position: PropTypes.array.isRequired,
 	bgFill: PropTypes.string.isRequired,
 	bgOpacity: PropTypes.number.isRequired,
+	bgStrokeWidth: PropTypes.number.isRequired,
+	bgStroke: PropTypes.string,
 	textFill: PropTypes.string.isRequired,
 
 	fontWeight: PropTypes.string.isRequired,
@@ -199,18 +208,14 @@ EachText.propTypes = {
 EachText.defaultProps = {
 	onDrag: noop,
 	onDragComplete: noop,
-	edgeStroke: "#000000",
-	edgeFill: "#FFFFFF",
-	edgeStrokeWidth: 2,
-	r: 5,
-	strokeWidth: 1,
-	opacity: 1,
+	bgOpacity: 1,
+	bgStrokeWidth: 1,
 	selected: false,
 	fill: "#8AAFE2",
 	hoverText: _extends({}, HoverTextNearMouse.defaultProps, {
 		enable: true,
-		bgHeight: 18,
-		bgWidth: 120,
+		bgHeight: "auto",
+		bgWidth: "auto",
 		text: "Click to select object"
 	})
 };

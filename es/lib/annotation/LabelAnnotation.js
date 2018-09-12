@@ -116,7 +116,7 @@ export function helper(props, xAccessor, xScale, yScale) {
 
 LabelAnnotation.propTypes = {
 	className: PropTypes.string,
-	text: PropTypes.string,
+	text: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
 	textAnchor: PropTypes.string,
 	fontFamily: PropTypes.string,
 	fontSize: PropTypes.number,

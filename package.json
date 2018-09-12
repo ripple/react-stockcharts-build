@@ -1,6 +1,6 @@
 {
   "name": "react-stockcharts",
-  "version": "0.7.6",
+  "version": "0.7.8",
   "description": "Highly customizable stock charts with ReactJS and d3",
   "main": "index.js",
   "module": "es/index.js",
@@ -24,7 +24,7 @@
     "debug": "^3.1.0",
     "lodash.flattendeep": "^4.4.0",
     "prop-types": "^15.6.0",
-    "save-svg-as-png": "^1.2.0"
+    "save-svg-as-png": "^1.4.5"
   },
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",

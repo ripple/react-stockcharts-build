@@ -119,10 +119,9 @@ var EachLinearRegressionChannel = function (_Component) {
 			var hoverHandler = interactive ? { onHover: this.handleHover, onUnHover: this.handleHover } : {};
 
 			var hoverTextEnabled = hoverText.enable,
-			    restHoverTextProps = _objectWithoutProperties(hoverText, ["enable"]);
-
-			// console.log("SELECTED ->", selected);
-
+			    hoverTextSelected = hoverText.selectedText,
+			    hoverTextUnselected = hoverText.text,
+			    restHoverTextProps = _objectWithoutProperties(hoverText, ["enable", "selectedText", "text"]);
 
 			return React.createElement(
 				"g",
@@ -162,8 +161,10 @@ var EachLinearRegressionChannel = function (_Component) {
 					onDrag: this.handleEdge2Drag,
 					onDragComplete: onDragComplete }),
 				React.createElement(HoverTextNearMouse, _extends({
-					show: hoverTextEnabled && hover && !selected
-				}, restHoverTextProps))
+					show: hoverTextEnabled && hover
+				}, restHoverTextProps, {
+					text: selected ? hoverTextSelected : hoverTextUnselected
+				}))
 			);
 		}
 	}]);

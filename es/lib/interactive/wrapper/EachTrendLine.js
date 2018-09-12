@@ -207,14 +207,16 @@ var EachTrendLine = function (_Component) {
 			    hoverText = _props8.hoverText,
 			    selected = _props8.selected,
 			    onDragComplete = _props8.onDragComplete;
+
+			var hoverTextEnabled = hoverText.enable,
+			    hoverTextSelected = hoverText.selectedText,
+			    hoverTextUnselected = hoverText.text,
+			    restHoverTextProps = _objectWithoutProperties(hoverText, ["enable", "selectedText", "text"]);
+
 			var _state = this.state,
 			    hover = _state.hover,
 			    anchor = _state.anchor;
 
-			// console.log("SELECTED ->", selected);
-
-			var hoverTextEnabled = hoverText.enable,
-			    restHoverTextProps = _objectWithoutProperties(hoverText, ["enable"]);
 
 			return React.createElement(
 				"g",
@@ -266,8 +268,10 @@ var EachTrendLine = function (_Component) {
 					onDrag: this.handleEdge2Drag,
 					onDragComplete: this.handleDragComplete }),
 				React.createElement(HoverTextNearMouse, _extends({
-					show: hoverTextEnabled && hover && !selected
-				}, restHoverTextProps))
+					show: hoverTextEnabled && hover
+				}, restHoverTextProps, {
+					text: selected ? hoverTextSelected : hoverTextUnselected
+				}))
 			);
 		}
 	}]);

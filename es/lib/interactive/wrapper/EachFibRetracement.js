@@ -239,7 +239,9 @@ var EachFibRetracement = function (_Component) {
 			var lines = helper({ x1: x1, x2: x2, y1: y1, y2: y2 });
 
 			var hoverTextEnabled = hoverText.enable,
-			    restHoverTextProps = _objectWithoutProperties(hoverText, ["enable"]);
+			    hoverTextSelected = hoverText.selectedText,
+			    hoverTextUnselected = hoverText.text,
+			    restHoverTextProps = _objectWithoutProperties(hoverText, ["enable", "selectedText", "text"]);
 
 			var lineType = type === "EXTEND" ? "XLINE" : type === "BOUND" ? "LINE" : type;
 			var dir = head(lines).y1 > last(lines).y1 ? 3 : -1.3;
@@ -341,12 +343,14 @@ var EachFibRetracement = function (_Component) {
 							strokeWidth: edgeStrokeWidth,
 							interactiveCursorClass: interactiveEdgeCursorClass,
 							onDrag: edge2DragHandler,
-							onDragComplete: onDragComplete }),
-						React.createElement(HoverTextNearMouse, _extends({
-							show: hoverTextEnabled && hover && !selected
-						}, restHoverTextProps))
+							onDragComplete: onDragComplete })
 					);
-				})
+				}),
+				React.createElement(HoverTextNearMouse, _extends({
+					show: hoverTextEnabled && hover
+				}, restHoverTextProps, {
+					text: selected ? hoverTextSelected : hoverTextUnselected
+				}))
 			);
 		}
 	}]);
